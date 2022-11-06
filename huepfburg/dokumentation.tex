@@ -88,8 +88,8 @@
 \section{Zusammenfassung}
 Die Aufgabe wird mit Hilfe einer Breitensuche gelöst, welche für jeden Spielschritt alle Felder, auf denen Mika und Sasha zu diesem sein können, findet und miteinander vergleicht, bis eine Abbruchbedingung erfüllt ist.
 \section{Lösungsidee}
-Das Spielfeld wird als gerichteter Graf $G$ mit den Knoten $V$ und den Kanten $E$ als Menge von 2-Tupeln der Ein- und Ausgangsknoten der Kanten modelliert, in dem jedes Feld für einen Knoten und jeder Pfeil für eine Kante steht. \\
-Die Spieler starten an den Knoten $v_1$ und $v_2$. Die möglichen Positionen zum beim ersten Spielschritt $t=0$ sind für Spieler 1 $M_{1,0}=\{v_1\}$ und für Spieler 2 $M_{2,0}=\{v_2\}$. Für jeden weiteren Spielschritt werden von allen Positionen des vorherigen Schrittes alle ausgehenden Kanten zum nächsten Knoten traversiert: 
+Das Spielfeld mit $n$ Feldern wird als gerichteter Graf mit den Knoten $V=\{1,2,...,n\}$ und den Kanten $E \subseteq V \times V$ als Menge von 2-Tupeln der Ein- und Ausgangsknoten der Kanten modelliert, in dem jedes Feld für einen Knoten und jeder Pfeil für eine Kante steht. \\
+Die Spieler starten an den Knoten $v_1$ und $v_2$. Die möglichen Positionen beim ersten Spielschritt $t=0$ sind für Spieler 1 $M_{1,0}=\{v_1\}$ und für Spieler 2 $M_{2,0}=\{v_2\}$. Für jeden weiteren Spielschritt werden von allen Positionen des vorherigen Schrittes alle ausgehenden Kanten zum nächsten Knoten traversiert: 
 \begin{align*}
 M_{s,t+1} = \{w | (v, w) \in E | v \in M_{s, t}\} 
 \end{align*}
@@ -99,17 +99,37 @@ B_0 &= \emptyset \\
 B_{t+1} &= B_{t} \cup (M_{1,t+1} \times M_{2, t+1})
 \end{align*}
 Die Wiederholung wird abgebrochen, wenn in einem Schritt keine weiteren Knotenpaare besucht werden: $B_t = B_{t+1}$. Das hat folgenden Grund: Wenn die Spieler sich in einem Schritt $t$ treffen, müssen sie beide von zwei verschiedenen Knoten dort hin gekommen sein; zu diesem Paar müssen die Spieler auch durch ein Paar unterschiedlicher Knoten gekommen sein, und so weiter. Wenn in einem Schritt allerdings keine neuen solchen Knotenpaare betreten werden, heißt das, dass keine neuen Pfade entdeckt werden können, die zu einem Knoten führen könnten, diese wurden alle schon in vorherigen Schritten betreten und davon ausgehende Pfade erkundet. Wenn die ausgehenden Pfade nämlich nicht vollständig erkundet wurden, würden durch diese neue Knotenpaare hinzukommen. So terminiert das Verfahren in höchstens $|V|^2 - |V|$ Schritten, da es höchstens so viele ungleiche Knotenpaare gibt. \\
-Um, wenn das Spiel lösbar ist, den Weg zu rekonstruieren, wird weiterhin eine partielle Funktion $H_t:V\times V \rightharpoonup V \times V$ eingeführt, die für erkundete Knotenpaar die jeweiligen Herkunftsknoten speichert (Es kann auch mehrere Herkunftsknotenpaare geben, allerdings wird für jedes Knotenpaar nur ein Herkunftsknotenpaar benötigt).
+Um, wenn das Spiel lösbar ist, den Weg zu rekonstruieren, wird weiterhin eine  Funktion $H_t:V\times V \rightarrow V \times V$ eingeführt, die für erkundete Knotenpaare die jeweiligen Herkunftsknoten speichert (Es kann auch mehrere Herkunftsknotenpaare geben, allerdings wird für jedes Knotenpaar nur ein Herkunftsknotenpaar benötigt). Die Funktion ist nicht definiert für Knotenpaare, die im Schritt $t$ noch nicht besucht wurden.
 \begin{align*}
-H_0: v_1,v_2 &\rightharpoonup undefiniert \\
-H_ {t+1}: v_1,v_2 &\rightharpoonup \begin{cases}
-H_{t}(v_1, v_2) &wenn (v_1,v_2) \in \mathbb{D}_{H_{t}}\\
-(w_1, w_2)|(w_1,v_1) \in E \land (w_2,v_2) \in E \land v_1 \in M_{1,t+1} \land v_2 \in M_{2, t+1}&wenn (v_1,v_2) \notin \mathbb{D}_{H_{t}}
+H_0(1,2) &= (-1, -1) \\
+H_{t+1}(v_1,v_2) &= \begin{cases}
+H_{t}(v_1, v_2) &wenn (v_1,v_2) \in B_t\\
+(w_1, w_2)|(w_1,v_1), (w_2,v_2) \in E \land w_1 \in M_{1,t} \land w_2 \in M_{2, t}&wenn (v_1,v_2) \in B_{t+1}
 \end{cases}
-\end{align*}
-$\mathbb{D}_f$ bezeichnet die Definitionsmenge einer partiellen Funktion $f$. \\\\
-Wenn sich die Spieler im Schritt $t$ auf dem Knoten $v$ treffen, kann man über $H_{t}(v,v)$ die Herkunftsknoten der beiden Spieler bestimmen. Für das Herkunftsknotenpaar kann man genauso die Herkunftsknoten bestimmen und so weiter bis die Herkunftsknoten irgendwann undefiniert sind, denn die Herkunftsknoten für das Anfangsknotenpaar $(1,2)$ ist nicht definiert.
+\end{align*}\\\\
+Wenn sich die Spieler im Schritt $t$ auf dem Knoten $v$ treffen, kann man über $H_{t}(v,v)$ die Herkunftsknoten der beiden Spieler bestimmen. Für das Herkunftsknotenpaar kann man genauso die Herkunftsknoten bestimmen und so weiter bis die Herkunftsknoten irgendwann beide $-1$ sind, denn die Herkunftsknoten für das Anfangsknotenpaar $(1,2)$ sind $(-1, -1)$.\\\\
+Aus den Gleichungen lässt sich mithilfe der Abbruchbedingungen ein Algorithmus formulieren, der die Werte von $M$, $B$ und $H$ im jeweils nächsten Schritt, ausgehend von den Startwerten solange berechnet, bis eine der Abbruchbedingungen erfüllt ist:
+\begin{algorithmic}
+\State $M_1 \gets \{1\}$
+\State $M_2 \gets \{2\}$
+\State $M_{1l} \gets \emptyset$
+\State $M_{2l} \gets \emptyset$
+\State $B \gets \{(1, 2)\}$
+\State $B_l \gets \emptyset$
+\State $H \gets \{(1, 2) \rightarrow (-1, -1)\}$
+\While {$M_1 \cap M_2 = \emptyset \land B \neq B_l$}
+\State $B_l, M_{1l}, M_{2l} \gets B, M_1, M_2$
+\State $M_1 \gets \{w | (v, w) \in E | v \in M_1\} $
+\State $M_2 \gets \{w | (v, w) \in E | v \in M_2\} $
+\State $B \gets B \cup M_1 \times M_2$
+\State $H \gets \begin{cases}
+H(v_1, v_2) &wenn (v_1,v_2) \in B_l\\
+(w_1, w_2)|(w_1,v_1), (w_2,v_2) \in E \land w_1 \in M_1l \land w_2 \in M_2l&wenn (v_1,v_2) \in B
+\end{cases}$
+\EndWhile
+\end{algorithmic}
 \section{Umsetzung}
-Die Lösung der Aufgabe wurde in Python implementiert. Dabei wurde der \lstinline|set|-Datentyp für die endlichen Mengen und der \lstinline|dict|-Datentyp für die Funktion $H$ verwendet. Der Graph $G$ wird als Liste von \lstinline|set|s dargestellt, dabei werden im $k$-ten Element die Knoten gespeichert, zu denen vom Knoten $k$ Kanten zeigen. Es handelt sich um eine Adjazenzliste. Die Knotenpaar-Tupel werden mit dem Datentyp \lstinline|tupel| dargestellt.
+Die Lösung der Aufgabe wurde in Python implementiert. Dabei wurde der \lstinline|set|-Datentyp für die endlichen Mengen und der \lstinline|dict|-Datentyp für die Funktion $H$ verwendet. Der Graph $G$ wird als Liste von \lstinline|set|s dargestellt, dabei werden im $k$-ten Element die Knoten gespeichert, zu denen vom Knoten $k$ Kanten zeigen. Es handelt sich um eine Adjazenzliste. Die Knotenpaar-Tupel werden mit dem Datentyp \lstinline|tupel| dargestellt. \\
+
 \section{Beispiele}
 \end{document}
