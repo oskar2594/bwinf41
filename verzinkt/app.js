@@ -1,10 +1,11 @@
+// Umsetzung der Funktionen für die Generierung eines Musters über die Web
 window.onload = function () {
     let surface = null;
     document.getElementById("generate").addEventListener("click", function () {
 
         function updateProgress(progress) {
             document.getElementsByClassName('display')[0].style = `--height: ${progress}%`;
-            if(progress == 101) {
+            if (progress == 101) {
                 document.getElementsByClassName('display')[0].style = `--height: 0%`;
             }
         }
@@ -18,21 +19,21 @@ window.onload = function () {
                 amount: parseInt(document.getElementById("spawn_amount").value) || 100
             },
             growth: {
-                up: {
-                    min: parseInt(document.getElementById("growth_up_min").value) || 1,
-                    max: parseInt(document.getElementById("growth_up_max").value) || 1
+                angle: {
+                    min: parseInt(document.getElementById("growth_angle_min").value) || 0,
+                    max: parseInt(document.getElementById("growth_angle_max").value) || 360
                 },
-                down: {
-                    min: parseInt(document.getElementById("growth_down_min").value) || 1,
-                    max: parseInt(document.getElementById("growth_down_max").value) || 1
+                rate: {
+                    min: parseInt(document.getElementById("growth_rate_min").value) || 1,
+                    max: parseInt(document.getElementById("growth_rate_max").value) || 10
                 },
-                left: {
-                    min: parseInt(document.getElementById("growth_left_min").value) || 1,
-                    max: parseInt(document.getElementById("growth_left_max").value) || 1
+                opposite: {
+                    min: parseInt(document.getElementById("growth_opposite_min").value) / 100 || 0.01,
+                    max: parseInt(document.getElementById("growth_opposite_max").value) / 100 || 0.5
                 },
-                right: {
-                    min: parseInt(document.getElementById("growth_right_min").value) || 1,
-                    max: parseInt(document.getElementById("growth_right_max").value) || 1
+                time: {
+                    min: parseInt(document.getElementById("growth_time_min").value) || 1,
+                    max: parseInt(document.getElementById("growth_time_max").value) || 1
                 }
             },
             updateProgress
@@ -41,7 +42,7 @@ window.onload = function () {
     });
 };
 
-
+// Repräsentiert die Oberfläche auf der das Muster generiert wird
 class Surface {
     filled = 0;
     constructor(ref, settings) {
@@ -54,18 +55,33 @@ class Surface {
         this.updateProgress = settings.updateProgress;
     }
 
+    // Startkristalle bzw. Keime erstellen
     create(amount, settings) {
         for (let i = 0; i < amount; i++) {
             let x = Utils.randomInt((this.width - settings.spawn.width) / 2, (this.width + settings.spawn.width) / 2 - 1);
             let y = Utils.randomInt((this.height - settings.spawn.height) / 2, (this.height + settings.spawn.height) / 2 - 1);
-            let growth = {
-                up: Utils.randomInt(settings.growth.up.min, settings.growth.up.max),
-                down: Utils.randomInt(settings.growth.down.min, settings.growth.down.max),
-                left: Utils.randomInt(settings.growth.left.min, settings.growth.left.max),
-                right: Utils.randomInt(settings.growth.right.min, settings.growth.right.max)
+            let growthData = {
+                angle: Utils.random(settings.growth.angle.min, settings.growth.angle.max),
+                growthRate: Utils.random(settings.growth.rate.min, settings.growth.rate.max),
+                oppositeGrowth: Utils.random(settings.growth.opposite.min, settings.growth.opposite.max),
             }
+
+            let growth = {
+                x: Utils.notZero(Math.cos(growthData.angle) * growthData.growthRate),
+                y: Utils.notZero(Math.sin(growthData.angle) * growthData.growthRate)
+            }
+
+            let computedGrowth = {
+                up: Math.ceil(Math.abs(growth.y > 0 ? growth.y : growth.y * growthData.oppositeGrowth)),
+                down: Math.ceil(Math.abs(growth.y < 0 ? growth.y : growth.y * growthData.oppositeGrowth)),
+                left: Math.ceil(Math.abs(growth.x < 0 ? growth.x : growth.x * growthData.oppositeGrowth)),
+                right: Math.ceil(Math.abs(growth.x > 0 ? growth.x : growth.x * growthData.oppositeGrowth))
+            }
+            let color = `rgb(${growthData.angle / 360 * 255}, ${growthData.angle / 360 * 255}, ${growthData.angle / 360 * 255})`;
+
+            let time = Utils.randomInt(settings.growth.time.min, settings.growth.time.max);
             if (this.crystals[y][x] == null) {
-                this.crystals[y][x] = new Crystal(x, y, growth);
+                this.crystals[y][x] = new Crystal(x, y, computedGrowth, time, color);
                 this.filled++;
                 continue;
             }
@@ -73,6 +89,7 @@ class Surface {
         }
     }
 
+    // Kristalle generieren
     async generate() {
         while (!await this.isFilled()) {
             await this.grow();
@@ -82,16 +99,19 @@ class Surface {
         this.updateProgress(101);
     }
 
+    // Kristall erstellen, wenn an der Stelle noch keiner ist
     add(crystal) {
-        if (crystal.y > this.crystals.length - 1 || crystal.x > this.crystals[0].length - 1 || crystal.x < 0 || crystal.y < 0) return "out";
-        if (this.crystals[crystal.y][crystal.x] == null) {
+        if (crystal.y > this.crystals.length - 1 || crystal.x > this.crystals[0].length - 1 || crystal.x < 0 || crystal.y < 0) return false;
+        if (this.crystals[crystal.y][crystal.x] == null || this.crystals[crystal.y][crystal.x].time > 1) {
+            (this.crystals[crystal.y][crystal.x] == null) && this.filled++;
             this.crystals[crystal.y][crystal.x] = crystal;
-            this.filled++;
+            crystal.draw(this);
             return true;
         }
         return false;
     }
 
+    // Aktuelle Kristalle zeichnen
     draw() {
         this.canvasDrawer.clear();
         const crystalCopy = Utils.flatten2dArray(this.crystals);
@@ -100,55 +120,79 @@ class Surface {
         });
     }
 
+    // Kristalle wachsen lassen
     async grow() {
         const crystalCopy = await Utils.getContentsOf2dArray(this.crystals);
         crystalCopy.forEach(crystal => !crystal.grew && crystal.grow(this));
     }
 
+    // Überprüfen, ob das Feld voll ist
     isFilled() {
-        this.updateProgress(this.filled / (this.width * this.height) * 100);
-        if (this.filled >= this.width * this.height) {
-            return true;
-        }
+        if (this.getLevel() >= 100) return true;
         return false;
     }
 
+    // Füllgrad des Feldes berechnen
+    getLevel() {
+        let level = this.filled / (this.width * this.height) * 100;
+        this.updateProgress(level); // Füllgrad in Web-App anzeigen
+        return level;
+    }
+
+    // Kristall zeichenen (Übergabe an CanvasDrawer)
     drawPoint(x, y, color) {
         this.canvasDrawer.drawPoint(x, y, color);
     }
 }
 
+
+// Represaentiert einen einzelnen Kristall (Pixel auf dem Canvas)
 class Crystal {
     growth = { up: 1, down: 1, left: 1, right: 1 };
     grew = false;
-    constructor(x, y, growth, color) {
+
+    constructor(x, y, growth, time, color) {
         growth && (this.growth = growth);
         this.x = x;
         this.y = y;
+        this.time = time || 1;
         this.color = color || Utils.randomGray();
     }
 
+    // Kristall wachsen lassen
     async grow(surface) {
+        this.time--;
+        if (this.time > 0) return;
         if (this.grew) return;
+        this.grew = true;
+
+        // Wachstum nach oben
         for (let i = 1; i < this.growth.up + 1; i++) {
             if (!await surface.add(this.createCopy(this.x, this.y - i))) break;
         }
+
+        // Wachstum nach unten
         for (let i = 1; i < this.growth.down + 1; i++) {
             if (!await surface.add(this.createCopy(this.x, this.y + i))) break;
         }
+
+        // Wachstum nach links
         for (let i = 1; i < this.growth.left + 1; i++) {
             if (!await surface.add(this.createCopy(this.x - i, this.y))) break;
         }
+
+        // Wachstum nach rechts
         for (let i = 1; i < this.growth.right + 1; i++) {
             if (!await surface.add(this.createCopy(this.x + i, this.y))) break;
         }
-        this.grew = true;
     }
 
+    // Erstellt eine Kopie des Kristalls
     createCopy(x, y) {
-        return new Crystal(x, y, this.growth, this.color);
+        return new Crystal(x, y, this.growth, 1, this.color);
     }
 
+    // Zeichnet den Kristall
     draw(surface) {
         surface.drawPoint(this.x, this.y, this.color);
     }
@@ -156,6 +200,7 @@ class Crystal {
 }
 
 
+// Hilfsfunktionen zum Zeichnen auf einem Canvas
 class CanvasDrawer {
     constructor(canvas, width = 500, height = 500) {
         this.canvas = canvas;
@@ -164,18 +209,26 @@ class CanvasDrawer {
         this.canvas.height = height;
     }
 
+    // Zeichnet einen Punkt
     drawPoint(x, y, color = "red") {
         this.context.fillStyle = color;
         this.context.fillRect(x, y, 1, 1);
     }
 
+    // Löscht den Canvas
     clear() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
 }
 
+// Hilfsfunktionen
 class Utils {
+
+    static random(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
     static randomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
@@ -183,18 +236,6 @@ class Utils {
     static randomGray() {
         let color = Utils.randomInt(0, 180);
         return `rgb(${color}, ${color}, ${color})`;
-    }
-
-    static randomColor() {
-        return `rgb(${Utils.randomInt(0, 205)}, ${Utils.randomInt(0, 205)}, ${Utils.randomInt(0, 205)})`;
-    }
-
-    static copyArray(array) {
-        return array.map(x => x);
-    }
-
-    static copy2dArray(array) {
-        return array.map(x => Utils.copyArray(x));
     }
 
     static flatten2dArray(array) {
@@ -214,6 +255,10 @@ class Utils {
 
     static sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    static notZero(value) {
+        return value > 0 ? Math.max(value, 0.01) : Math.min(value, 0.01);
     }
 
 }
