@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Verzinkt</title>
+    <script src="./app.js"></script>
+</head>
+
+<body>
+    <div class="app">
+        <div class="display" style="--height: 0%">
+            <canvas class="canvas"></canvas>
+        </div>
+        <div class="form">
+            <h1>Settings</h1>
+            <h2>Field</h2>
+            <div class="item">
+                <label for="width">Width</label>
+                <input type="number" id="width" name="width" value="500" />
+            </div>
+            <div class="item">
+                <label for="height">Height</label>
+                <input type="number" id="height" name="height" value="500" />
+            </div>
+            <br>
+            <hr><br>
+            <h2>Spawn</h2>
+            <div class="item">
+                <label for="spawn_amount">Amount</label>
+                <input type="number" id="spawn_amount" name="spawn_amount" value="100" />
+            </div>
+            <div class="item">
+                <label for="spawn_width">Width</label>
+                <input type="number" id="spawn_width" name="spawn_width" value="500" />
+            </div>
+            <div class="item">
+                <label for="spawn_height">Height</label>
+                <input type="number" id="spawn_height" name="spawn_height" value="500" />
+            </div>
+            <br>
+            <hr><br>
+            <h2>Growth</h2>
+            <div class="item_minmax">
+                <p>Angle</p>
+                <div>
+                    <input type="number" id="growth_angle_min" name="growth_angle_min" value="1" placeholder="min">
+                    <input type="number" id="growth_angle_max" name="growth_angle_max" value="360" placeholder="max">
+                </div>
+            </div>
+            <div class="item_minmax">
+                <p>Growrate</p>
+                <div>
+                    <input type="number" id="growth_rate_min" name="growth_rate_min" value="1" placeholder="min">
+                    <input type="number" id="growth_rate_max" name="growth_rate_max" value="5" placeholder="max">
+                </div>
+            </div>
+            <div class="item_minmax">
+                <p>Opposite Growth</p>
+                <div>
+                    <input type="number" id="growth_opposite_min" name="growth_opposite_min" value="10" placeholder="min">
+                    <input type="number" id="growth_opposite_max" name="growth_opposite_max" value="30" placeholder="max">
+                </div>
+            </div>
+            <div class="item_minmax">
+                <p>Time (Ticks)</p>
+                <div>
+                    <input type="number" id="growth_time_min" name="growth_time_min" value="1" placeholder="min">
+                    <input type="number" id="growth_time_max" name="growth_time_max" value="5" placeholder="max">
+                </div>
+            </div><br>
+            <button id="generate">Generate</button>
+        </div>
+
+    </div>
+    <style>
+        :root {
+            --background-color: rgb(16, 16, 20);
+            --button-color: rgb(32, 32, 36);
+            --text-color: rgb(224, 224, 224);
+            --highlight-color: rgb(29, 117, 233);
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: var(--background-color);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .app {
+            height: 100%;
+            width: 100%;
+            max-width: 100vw;
+            padding: 5% 2.5%;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            gap: min(10%, 2rem);
+        }
+
+
+        .app .display {
+            display: flex;
+            height: 100%;
+            max-width: 50%;
+        }
+
+        .app .display canvas {
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            background: linear-gradient(180deg, rgba(2, 0, 36, 0) 0%, rgba(233, 233, 233, 0) calc(100% - var(--height)), rgba(54, 54, 204, 1) calc(100% - var(--height)), rgba(0, 212, 255, 1) 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            outline: .5rem solid var(--button-color);
+            transition: 500ms background;
+        }
+
+        .app .form {
+            flex: 1;
+            height: 100%;
+            overflow: scroll;
+            color: var(--text-color);
+        }
+
+        .app .form h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .app .form h2 {
+            position: relative;
+            font-size: 2rem;
+            margin-left: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .app .form h2:before {
+            content: "";
+            height: 2rem;
+            width: .2rem;
+            background-color: var(--button-color);
+            position: absolute;
+            left: -1rem;
+        }
+
+        .app .form button {
+            margin: 1rem 0;
+            padding: 1rem 3rem;
+            border-radius: 1rem;
+            background-color: var(--button-color);
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            border: .2rem solid transparent;
+        }
+
+
+        .app .form button:hover {
+            border: .2rem solid var(--highlight-color);
+        }
+
+        .app .form .item label,
+        .app .form .item_minmax label {
+            display: block;
+        }
+
+        .app .form .item input,
+        .app .form .item_minmax input {
+            margin: .5rem 0;
+            padding: .5rem 1rem;
+            border-radius: 1rem;
+            background-color: var(--button-color);
+            color: var(--text-color);
+            font-size: 1.5rem;
+            border: .2rem solid var(--button-color);
+        }
+
+        .app .form .item input:hover,
+        .app .form .item_minmax input:hover {
+            border: .2rem solid var(--highlight-color);
+        }
+
+        .app .form .item input:focus,
+        .app .form .item_minmax input:focus {
+            outline: none;
+            border: .2rem solid var(--highlight-color);
+        }
+
+        .app .form hr {
+            width: 100%;
+            border-color: rgba(197, 197, 197, 0.144);
+        }
+    </style>
+</body>
+
+</html>
