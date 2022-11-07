@@ -9,8 +9,9 @@ type VertexPair = (Vertex, Vertex)
 type OriginFunc = VertexPair -> VertexPair
 type State = (Set Vertex, Set Vertex, Set VertexPair, OriginFunc)
 
+-- Positionen, an denen ein Spieler im nächsten Schritt sein kann
 nextPos :: Graph -> Set Vertex -> Set Vertex
-nextPos graph pos = fromList $ concat [graph ! p | p <- elems pos]
+nextPos graph = fromList . concatMap (graph !) . elems
 
 nextState :: Graph -> State -> State
 nextState graph (pos1, pos2, pairs, origin) =
