@@ -9,11 +9,8 @@ type VertexPair = (Vertex, Vertex)
 type OriginFunc = VertexPair -> VertexPair
 type State = (Set Vertex, Set Vertex, Set VertexPair, OriginFunc)
 
-flatten :: [[a]] -> [a]
-flatten = foldl1 (++)
-
 nextPos :: Graph -> Set Vertex -> Set Vertex
-nextPos graph pos = fromList $ flatten [graph ! p | p <- elems pos]
+nextPos graph pos = fromList $ concat [graph ! p | p <- elems pos]
 
 nextState :: Graph -> State -> State
 nextState graph (pos1, pos2, pairs, origin) =
@@ -29,8 +26,7 @@ nextState graph (pos1, pos2, pairs, origin) =
 
 -- Findet den Weg zu einem Knotenpaar aus einer Herkunftsfunktion
 startPath :: OriginFunc -> VertexPair -> [VertexPair]
-startPath _ (1, 2) = [(1, 2)]
-startPath origin (p1, p2) = (p1, p2) : startPath origin (origin (p1, p2))
+startPath origin = takeWhile (/=(1, 2)) . iterate origin 
 
 solve :: Graph -> State -> Maybe [VertexPair]
 solve graph (pos1, pos2, pairs, origin)
