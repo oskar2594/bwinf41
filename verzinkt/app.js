@@ -77,7 +77,7 @@ class Surface {
                 left: Math.ceil(Math.abs(growth.x < 0 ? growth.x : growth.x * growthData.oppositeGrowth)),
                 right: Math.ceil(Math.abs(growth.x > 0 ? growth.x : growth.x * growthData.oppositeGrowth))
             }
-            let color = `rgb(${growthData.angle / 360 * 255}, ${growthData.angle / 360 * 255}, ${growthData.angle / 360 * 255})`;
+            let color = Utils.getGray(growthData.angle);
 
             let time = Utils.randomInt(settings.growth.time.min, settings.growth.time.max);
             if (this.crystals[y][x] == null) {
@@ -225,23 +225,29 @@ class CanvasDrawer {
 // Hilfsfunktionen
 class Utils {
 
+
+    // Zufallszahl zwischen min und max
     static random(min, max) {
         return Math.random() * (max - min) + min;
     }
 
+    // Ganzzahlige Zufallszahl zwischen min und max
     static randomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    static randomGray() {
-        let color = Utils.randomInt(0, 180);
+    // Grautonfarbe in Abhängigkeit des Winkels
+    static getGray(angle) {
+        let color = Math.floor(55 + (angle / 360) * 170);
         return `rgb(${color}, ${color}, ${color})`;
     }
 
+    // 2d-Array in 1d-Array umwandeln
     static flatten2dArray(array) {
         return array.reduce((a, b) => a.concat(b));
     }
 
+    // Alle Inhalte eines 2d-Arrays
     static getContentsOf2dArray(array) {
         let contents = [];
         let yLength = array[0].length;
@@ -253,10 +259,12 @@ class Utils {
         return contents;
     }
 
+    // Warten für async Funktionen
     static sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    // Zahl nicht gleich 0
     static notZero(value) {
         return value > 0 ? Math.max(value, 0.01) : Math.min(value, 0.01);
     }
