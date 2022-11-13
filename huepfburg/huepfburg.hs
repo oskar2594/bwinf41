@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-
 import Data.Array ((!))
 import Data.Graph
 import Data.Maybe (fromJust, isJust)
@@ -27,14 +25,10 @@ nextState graph (pos1, pos2, pairs, origin) =
              in (pred p1 pos1, pred p2 pos2)
    in (pos1n, pos2n, pairsn, origin_new)
 
--- Findet den Weg zu einem Knotenpaar aus einer Herkunftsfunktion
-startPath :: OriginFunc -> VertexPair -> [VertexPair]
-startPath origin = takeWhile (/=(1, 2)) . iterate origin 
-
 -- Findet Weg, so dass Spieler sich treffen
 solve :: Graph -> State -> Maybe [VertexPair]
 solve graph (pos1, pos2, pairs, origin)
-  | isJust intersect = Just (startPath origin (fromJust intersect, fromJust intersect))
+  | isJust intersect = Just (takeWhile (/=(1, 2)) . iterate origin $ (fromJust intersect, fromJust intersect))
   | pairsn == pairs = Nothing
   | otherwise = solve graph (pos1n, pos2n, pairsn, origin_new)
   where
