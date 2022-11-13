@@ -90,7 +90,7 @@ Spielschritt alle Felder, auf denen Mika und Sasha zu diesem sein können,
 findet und miteinander vergleicht, bis eine Abbruchbedingung erfüllt ist.
 \section{Lösungsidee}
 Das Spielfeld mit $n$ Feldern wird als gerichteter Graf mit den Knoten
-$V=\{1,2,...,n\}$ und den Kanten $E \subseteq V \times V$ als Menge von
+$V=\{1,2,\ldots,n\}$ und den Kanten $E \subseteq V \times V$ als Menge von
 2-Tupeln der Ein- und Ausgangsknoten der Kanten modelliert, in dem jedes Feld
 für einen Knoten und jeder Pfeil für eine Kante steht. \\ Die Spieler starten
 an den Knoten $v_1$ und $v_2$. Die möglichen Positionen beim ersten
@@ -132,19 +132,19 @@ bis die Herkunftsknoten irgendwann beide $-1$ sind, denn die Herkunftsknoten fü
 Aus den Gleichungen lässt sich mithilfe der Abbruchbedingungen ein Algorithmus formulieren, der die Werte von $M$, $B$
 und $H$ im jeweils nächsten Schritt, ausgehend von den Startwerten solange berechnet, bis eine der Abbruchbedingungen erfüllt ist:
 \begin{algorithmic}
-  \State $M_1 \gets \{1\}$
-  \State $M_2 \gets \{2\}$
-  \State $M_{1l} \gets \emptyset$
-  \State $M_{2l} \gets \emptyset$
-  \State $B \gets \{(1, 2)\}$
-  \State $B_l \gets \emptyset$
-  \State $H \gets \{(1, 2) \rightarrow (-1, -1)\}$
-  \While {$M_1 \cap M_2 = \emptyset \land B \neq B_l$}
-  \State $B_l, M_{1l}, M_{2l} \gets B, M_1, M_2$
-  \State $M_1 \gets \{w | (v, w) \in E | v \in M_1\} $
-  \State $M_2 \gets \{w | (v, w) \in E | v \in M_2\} $
-  \State $B \gets B \cup M_1 \times M_2$
-  \State $H \gets \begin{cases}
+  \State$M_1 \gets \{1\}$
+  \State$M_2 \gets \{2\}$
+  \State$M_{1l} \gets \emptyset$
+  \State$M_{2l} \gets \emptyset$
+  \State$B \gets \{(1, 2)\}$
+  \State$B_l \gets \emptyset$
+  \State$H \gets \{(1, 2) \rightarrow (-1, -1)\}$
+  \While{$M_1 \cap M_2 = \emptyset \land B \neq B_l$}
+  \State$B_l, M_{1l}, M_{2l} \gets B, M_1, M_2$
+  \State$M_1 \gets \{w | (v, w) \in E | v \in M_1\} $
+  \State$M_2 \gets \{w | (v, w) \in E | v \in M_2\} $
+  \State$B \gets B \cup M_1 \times M_2$
+  \State$H \gets \begin{cases}
       H(v_1, v_2)                                                                 & wenn (v_1,v_2) \in B_l \\
       (w_1, w_2)|(w_1,v_1), (w_2,v_2) \in E \land w_1 \in M_1l \land w_2 \in M_2l & wenn (v_1,v_2) \in B
     \end{cases}$
