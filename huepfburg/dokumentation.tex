@@ -116,7 +116,7 @@ und so weiter. Wenn in einem Schritt allerdings keine neuen solchen Knotenpaare 
 Pfade entdeckt werden können, die zu einem Knoten führen könnten, diese wurden alle schon in vorherigen Schritten betreten und
 davon ausgehende Pfade erkundet. Wenn die ausgehenden Pfade nämlich nicht vollständig erkundet wurden, würden durch diese neue
 Knotenpaare hinzukommen. So terminiert das Verfahren in höchstens $|V|^2 - |V|$ Schritten, da es höchstens so viele ungleiche Knotenpaare gibt. \\
-Um, wenn das Spiel lösbar ist, den Weg zu rekonstruieren, wird weiterhin eine  Funktion $H_t:V\times V \rightarrow V \times V$ eingeführt,
+Um, wenn das Spiel lösbar ist, den Weg zu rekonstruieren, wird weiterhin eine  Funktion $H_t:B_t \rightarrow B_{t-1}$ eingeführt,
 die für erkundete Knotenpaare die jeweiligen Herkunftsknoten speichert (Es kann auch mehrere Herkunftsknotenpaare geben, allerdings wird für
 jedes Knotenpaar nur ein Herkunftsknotenpaar benötigt). Die Funktion ist nicht definiert für Knotenpaare, die im Schritt $t$ noch nicht besucht wurden.
 \begin{align*}
@@ -138,13 +138,13 @@ und $H$ im jeweils nächsten Schritt, ausgehend von den Startwerten solange bere
   \State$M_{2l} \gets \emptyset$
   \State$B \gets \{(1, 2)\}$
   \State$B_l \gets \emptyset$
-  \State$H \gets \{(1, 2) \rightarrow (-1, -1)\}$
+  \State$H \gets (1, 2) \mapsto (-1, -1)$
   \While{$M_1 \cap M_2 = \emptyset \land B \neq B_l$}
   \State$B_l, M_{1l}, M_{2l} \gets B, M_1, M_2$
   \State$M_1 \gets \{w | (v, w) \in E | v \in M_1\} $
   \State$M_2 \gets \{w | (v, w) \in E | v \in M_2\} $
   \State$B \gets B \cup M_1 \times M_2$
-  \State$H \gets \begin{cases}
+  \State$H \gets (v1, v2) \mapsto \begin{cases}
       H(v_1, v_2)                                                                 & wenn (v_1,v_2) \in B_l \\
       (w_1, w_2)|(w_1,v_1), (w_2,v_2) \in E \land w_1 \in M_1l \land w_2 \in M_2l & wenn (v_1,v_2) \in B
     \end{cases}$
