@@ -1,4 +1,5 @@
-def find_path(edges):
+# Findet Pfade, über die die Spieler sich treffen können
+def find_paths(edges):
     pos1 = {1}
     pos2 = {2}
     pos1_last = set()
@@ -23,13 +24,14 @@ def find_path(edges):
             path.append(origins[path[-1]])
         return path[::-1]
     return None
-edges = set()
 
+# Graph aus Datei einlesen
+edges = set()
 with open(input("Pfad: ")) as f:
     while line := f.readline():
         edges.add(tuple(map(int, line.split())))
 
-path = find_path(edges)
+path = find_paths(edges)
 if path:
     print("Treffen möglich")
     print("Pfad 1:")
