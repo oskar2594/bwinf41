@@ -30,7 +30,6 @@
 \graphicspath{ {./bilder/}}
 % Für Algorithmen
 \usepackage{algpseudocode}
-
 % Für Quelltext
 \usepackage{listings}
 \lstset{literate=%
@@ -128,7 +127,7 @@ jedes Knotenpaar nur ein Herkunftsknotenpaar benötigt). Die Funktion ist nicht 
 \end{align*}\\\\
 Wenn sich die Spieler im Schritt $t$ auf dem Knoten $v$ treffen, kann man über $H_{t}(v,v)$ die Herkunftsknoten der
 beiden Spieler bestimmen. Für das Herkunftsknotenpaar kann man genauso die Herkunftsknoten bestimmen und so weiter
-bis die Herkunftsknoten irgendwann beide $-1$ sind, denn die Herkunftsknoten für das Anfangsknotenpaar $(1,2)$ sind $(-1, -1)$.\\\\
+bis die Herkunftsknoten irgendwann (1,2) sind.\\\\
 Aus den Gleichungen lässt sich mithilfe der Abbruchbedingungen ein Algorithmus formulieren, der die Werte von $M$, $B$
 und $H$ im jeweils nächsten Schritt, ausgehend von den Startwerten solange berechnet, bis eine der Abbruchbedingungen erfüllt ist:
 \begin{algorithmic}
@@ -149,15 +148,25 @@ und $H$ im jeweils nächsten Schritt, ausgehend von den Startwerten solange bere
       (w_1, w_2)|(w_1,v_1), (w_2,v_2) \in E \land w_1 \in M_1l \land w_2 \in M_2l & wenn (v_1,v_2) \in B
     \end{cases}$
   \EndWhile
+  \If{$M_1 \cap M_2 \neq \emptyset$}
+  \State$P \gets [(x,x) | x \in M_1 \cap M_2]$
+  \While{$P[-1] \neq (1, 2)$}
+  \State$P \gets P +\!\!\!+ [H(P[-1])]$
+  \EndWhile
+  \State \Return $P$
+  \Else
+  \State \Return $[]$
+  \EndIf
 \end{algorithmic}
 \section{Umsetzung}
 Die Lösung der Aufgabe wurde in Python implementiert. Dabei wurde der
 \lstinline|set|-Datentyp für die endlichen Mengen und der
-\lstinline|dict|-Datentyp für die Funktion $H$ verwendet. Der Graph $G$ wird
-als Liste von \lstinline|set|s dargestellt, dabei werden im $k$-ten Element die
-Knoten gespeichert, zu denen vom Knoten $k$ Kanten zeigen. Es handelt sich um
-eine Adjazenzliste. Die Knotenpaar-Tupel werden mit dem Datentyp
-\lstinline|tupel| dargestellt. \\
+\lstinline|dict|-Datentyp für die Zuordnung $H$ verwendet. Die Menge der Kanten wird
+als Menge von \lstinline|tupel|s dargestellt. Die Knotenpaar-Tupel werden auch mit dem Datentyp
+\lstinline|tupel| dargestellt. Das Programm ist eine direkte Transkription des Pseudocodes aus der Lösungsidee.\\
 
 \section{Beispiele}
+Die Beispiele stammen von der BwInf-Webseite und sind im Verzeichnis \lstinline|beispiele| zu finden.\\
+\section{Quellcode}
+\lstinputlisting[language=python]{huepfburg doc.py}
 \end{document}
