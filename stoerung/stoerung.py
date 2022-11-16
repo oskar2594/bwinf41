@@ -33,3 +33,5 @@ for line, line_number in list_of_results:
     print("line: " + str(line_number))
     print(line)
     print("")
+if not list_of_results:
+    print("nichts gefunden")
