@@ -26,9 +26,7 @@ while line_number < len(buch):
                 # auch mit: arr = arr[len(stoerung):]
                 for g in range(len(stoerung)):
                     arr.pop(0)
-
                 break
-
     line_number += 1
 
 for line, line_number in list_of_results:
