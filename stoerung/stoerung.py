@@ -21,7 +21,7 @@ while line_number < len(buch):
                 # hier ist die lösung gefunden worden
                 # man müsste die lösung noch ein bisschen putzen 
                 # und von allen sonderzeichen befreien, sonst top
-                list_of_results.append((arr[: len(stoerung)], line_number))
+                list_of_results.append((" ".join(arr[: len(stoerung)]), line_number))
 
                 # auch mit: arr = arr[len(stoerung):]
                 for g in range(len(stoerung)):
