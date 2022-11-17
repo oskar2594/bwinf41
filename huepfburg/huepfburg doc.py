@@ -19,11 +19,12 @@ def find_paths(edges):
             if w1 in pos1_last and w2 in pos2_last
         } | origins
     if pos1 & pos2:
-        path = [(a := (pos1&pos2).pop(), a)]
+        path = [(a := (pos1 & pos2).pop(), a)]
         while path[-1] != (1, 2):
             path.append(origins[path[-1]])
         return path[::-1]
     return None
+
 
 # Graph aus Datei einlesen
 edges = set()
