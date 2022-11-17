@@ -14,7 +14,8 @@ def main():
     iterations = len(start)
     time = 0
 
-    # Durchlauf der Verfahren mit haesslicher Ausgabe, leicht schoenere in waitresults
+    # Durchlauf der Verfahren mit haesslicher Ausgabe, 
+    # leicht schoenere in waitresults
     print(first_come_first_serve(start, work, iterations, time))
     print(shortest_job_next(start, work, iterations, time))
     print(highest_response_ratio_next(start, work, iterations, time))
@@ -23,14 +24,15 @@ def main():
 def simulation(i, time_of_order, order_duration, wait, time):
     # time = max(time, time_of_order[i])
 
-    # Wenn die Bearbeitungsdauer den aktuellen Arbeitstag ueberschreitet, wird dieser Arbeitstag beendet
+    # Wenn die Bearbeitungsdauer den aktuellen Arbeitstag ueberschreitet, 
+    # wird dieser Arbeitstag beendet
     restarbeitstag = 1020 - time % 1440
     if order_duration[i] > restarbeitstag:
         order_duration[i] -= restarbeitstag
         time += 960 + restarbeitstag
 
-    # Fertigstellungszeit des Auftrages ergibt sich aus der restlichen Arbeitszeit und der Zeit,
-    # die zwischen den Arbeitstagen liegt
+    # Fertigstellungszeit des Auftrages ergibt sich aus der restlichen
+    # Arbeitszeit und der Zeit, die zwischen den Arbeitstagen liegt
     time += order_duration[i] + (order_duration[i] // 480) * 960
 
     # Wartezeiten der verschiedenen Auftraege werden hier gespeichert
