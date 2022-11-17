@@ -4,8 +4,6 @@
 <head>
     <meta charset="utf-8" />
     <title>Verzinkt</title>
-    <script src="./generator.js"></script>
-    <script src="./app.js"></script>
 </head>
 
 <body>
@@ -59,8 +57,10 @@
             <div class="item_minmax">
                 <p>Opposite Growth</p>
                 <div>
-                    <input type="number" id="growth_opposite_min" name="growth_opposite_min" value="10" placeholder="min">
-                    <input type="number" id="growth_opposite_max" name="growth_opposite_max" value="30" placeholder="max">
+                    <input type="number" id="growth_opposite_min" name="growth_opposite_min" value="10"
+                        placeholder="min">
+                    <input type="number" id="growth_opposite_max" name="growth_opposite_max" value="30"
+                        placeholder="max">
                 </div>
             </div>
             <div class="item_minmax">
@@ -201,6 +201,112 @@
             border-color: rgba(197, 197, 197, 0.144);
         }
     </style>
+    <script>
+        // Umsetzung der Funktionen für die Generierung eines Musters über die Web (Nicht Teil der Aufgabe)
+        window.onload = function () {
+            let surface = null;
+            document.getElementById("generate").addEventListener("click", function () {
+
+                function updateProgress(progress) {
+                    document.getElementsByClassName('display')[0].style = `--height: ${progress * 100}%`;
+                    if (progress == 101) {
+                        document.getElementsByClassName('display')[0].style = `--height: 0%`;
+                    }
+                }
+
+                surface = new Generator(document.getElementsByClassName('canvas')[0], {
+                    width: parseInt(document.getElementById("width").value) || 500,
+                    height: parseInt(document.getElementById("height").value) || 500,
+                    spawn: {
+                        width: parseInt(document.getElementById("spawn_width").value) || 500,
+                        height: parseInt(document.getElementById("spawn_height").value) || 500,
+                        amount: parseInt(document.getElementById("spawn_amount").value) || 100
+                    },
+                    growth: {
+                        angle: {
+                            min: parseInt(document.getElementById("growth_angle_min").value) || 0,
+                            max: parseInt(document.getElementById("growth_angle_max").value) || 360
+                        },
+                        rate: {
+                            min: parseInt(document.getElementById("growth_rate_min").value) || 1,
+                            max: parseInt(document.getElementById("growth_rate_max").value) || 10
+                        },
+                        opposite: {
+                            min: parseInt(document.getElementById("growth_opposite_min").value) / 100 || 0.01,
+                            max: parseInt(document.getElementById("growth_opposite_max").value) / 100 || 0.5
+                        },
+                        time: {
+                            min: parseInt(document.getElementById("growth_time_min").value) || 1,
+                            max: parseInt(document.getElementById("growth_time_max").value) || 1
+                        }
+                    },
+                    update: updateProgress
+                });
+                surface.generate();
+            });
+        };
+
+        // Klasse für die Generierung eines Musters
+        class Generator {
+            filled = 0;
+            constructor(canvas, settings) {
+                this.settings = settings;
+                this.canvas = canvas?.getContext("2d"); (canvas.width = settings.width), (canvas.height = settings.height);
+                this.canvas.clearRect(0, 0, this.settings.width, this.settings.height);
+                this.crystals = new Array(settings.height).fill(0).map((x) => new Array(settings.width).fill(null));
+            }
+            async setCrystal(crystalData, position) {
+                if (!(position.y > this.crystals.length - 1 || position.x > this.crystals[0].length - 1 || position.x < 0 || position.y < 0) && (this.crystals[position.y][position.x] == null || this.crystals[position.y][position.x].time > 1)) {
+                    this.crystals[position.y][position.x] = crystalData; this.filled++;
+                    this.canvas.fillStyle = crystalData.color;
+                    this.canvas.fillRect(position.y, position.x, 1, 1);
+                    return true;
+                }
+                return false;
+            }
+            async generate() {
+                for (let i = 0; i < this.settings.spawn.amount; i++) {
+                    const position = { x: Generator.randomInt((this.settings.width - this.settings.spawn.width) / 2, (this.settings.width + this.settings.spawn.width) / 2 - 1), y: Generator.randomInt((this.settings.height - this.settings.spawn.height) / 2, (this.settings.height + this.settings.spawn.height) / 2 - 1), }; // Zufällige Position im Spawnbereich
+                    const growthValues = {
+                        angle: Generator.random(this.settings.growth.angle.min, this.settings.growth.angle.max),
+                        growthRate: Generator.random(this.settings.growth.rate.min, this.settings.growth.rate.max),
+                        oppositeGrowth: Generator.random(this.settings.growth.opposite.min, this.settings.growth.opposite.max)
+                    };
+                    const dirGrowth = {
+                        x: Generator.notZero(Math.cos(growthValues.angle) * growthValues.growthRate),
+                        y: Generator.notZero(Math.sin(growthValues.angle) * growthValues.growthRate)
+                    };
+                    const pixelGrowth = {
+                        up: Math.ceil(Math.abs(dirGrowth.y > 0 ? dirGrowth.y : dirGrowth.y * growthValues.oppositeGrowth)),
+                        down: Math.ceil(Math.abs(dirGrowth.y < 0 ? dirGrowth.y : dirGrowth.y * growthValues.oppositeGrowth)),
+                        left: Math.ceil(Math.abs(dirGrowth.x < 0 ? dirGrowth.x : dirGrowth.x * growthValues.oppositeGrowth)),
+                        right: Math.ceil(Math.abs(dirGrowth.x > 0 ? dirGrowth.x : dirGrowth.x * growthValues.oppositeGrowth)),
+                    };
+                    const color = `rgb(${Math.floor(55 + (growthValues.angle / 360) * 170)}, ${Math.floor(55 + (growthValues.angle / 360) * 170)}, ${Math.floor(55 + (growthValues.angle / 360) * 170)})`; // Farbe des Kristalls aus dem Winkel berechnen
+                    if (!this.setCrystal({ growth: pixelGrowth, color: color, time: Generator.randomInt(this.settings.growth.time.min, this.settings.growth.time.max) }, position)) i--;
+                }
+                while (this.filled < this.settings.width * this.settings.height) {
+                    const tempCrystals = Generator.deepCopy(this.crystals);
+                    this.settings.update?.(this.filled / (this.settings.width * this.settings.height));
+                    for (let y = 0; y < this.crystals.length; y++) for (let x = 0; x < this.crystals[0].length; x++) {
+                        if (tempCrystals[y][x] == null) continue;
+                        let crystal = this.crystals[y][x];
+                        if (crystal == null || crystal.time-- > 0 || crystal.grew) continue;
+                        for (let i = 1; i < crystal.growth.up + 1; i++) if (!this.setCrystal(Generator.deepCopy(crystal), { x: x, y: y - i })) break;
+                        for (let i = 1; i < crystal.growth.down + 1; i++) if (!this.setCrystal(Generator.deepCopy(crystal), { x: x, y: y + i })) break;
+                        for (let i = 1; i < crystal.growth.left + 1; i++) if (!this.setCrystal(Generator.deepCopy(crystal), { x: x - i, y: y })) break;
+                        for (let i = 1; i < crystal.growth.right + 1; i++) if (!this.setCrystal(Generator.deepCopy(crystal), { x: x + i, y: y })) break;
+                        crystal.grew = true;
+                    }
+                    await new Promise((resolve) => setTimeout(resolve, 0));
+                }
+            }
+            static notZero = (value) => (Math.ceil(Math.abs(value)) * value) / Math.abs(value);
+            static random = (min, max) => Math.random() * (max - min) + min;
+            static randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+            static deepCopy = (element) => JSON.parse(JSON.stringify(element));
+        }
+    </script>
 </body>
 
 </html>
