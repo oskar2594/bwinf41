@@ -9,7 +9,7 @@
 \newcommand{\TeamId}{00730}                       % Team-ID aus dem PMS angeben
 \newcommand{\TeamName}{SilverBean}                 % Team-Namen angeben
 \newcommand{\Namen}{Philip Gilde}           % Namen der Bearbeiter/-innen dieser Aufgabe angeben
- 
+
 \usepackage{scrlayer-scrpage, lastpage}
 \setkomafont{pageheadfoot}{\large\textrm}
 \lohead{\Aufgabe}
@@ -30,17 +30,16 @@
 \graphicspath{ {./bilder/}}
 % Für Algorithmen
 \usepackage{algpseudocode}
-
 % Für Quelltext
 \usepackage{listings}
 \lstset{literate=%
   {Ö}{{\"O}}1
-  {Ä}{{\"A}}1
-  {Ü}{{\"U}}1
-  {ß}{{\ss}}1
-  {ü}{{\"u}}1
-  {ä}{{\"a}}1
-  {ö}{{\"o}}1
+{Ä}{{\"A}}1
+{Ü}{{\"U}}1
+{ß}{{\ss}}1
+{ü}{{\"u}}1
+{ä}{{\"a}}1
+{ö}{{\"o}}1
 }
 \usepackage{color}
 \definecolor{mygreen}{rgb}{0,0.6,0}
@@ -72,9 +71,9 @@
 % Daten für die Titelseite
 \title{\textbf{\Huge\Aufgabe}}
 \author{\LARGE Team-ID: \LARGE \TeamId \\\\
-	    \LARGE Team-Name: \LARGE \TeamName \\\\
-	    \LARGE Bearbeiter/-innen dieser Aufgabe: \\ 
-	    \LARGE \Namen\\\\}
+  \LARGE Team-Name: \LARGE \TeamName \\\\
+  \LARGE Bearbeiter/-innen dieser Aufgabe: \\
+  \LARGE \Namen\\\\}
 \date{\LARGE\today}
 
 \begin{document}
@@ -84,52 +83,90 @@
 
 \vspace{0.5cm}
 
-
 \section{Zusammenfassung}
-Die Aufgabe wird mit Hilfe einer Breitensuche gelöst, welche für jeden Spielschritt alle Felder, auf denen Mika und Sasha zu diesem sein können, findet und miteinander vergleicht, bis eine Abbruchbedingung erfüllt ist.
+Die Aufgabe wird mit Hilfe einer Breitensuche gelöst, welche für jeden
+Spielschritt alle Felder, auf denen Mika und Sasha zu diesem sein können,
+findet und miteinander vergleicht, bis eine Abbruchbedingung erfüllt ist.
 \section{Lösungsidee}
-Das Spielfeld mit $n$ Feldern wird als gerichteter Graf mit den Knoten $V=\{1,2,...,n\}$ und den Kanten $E \subseteq V \times V$ als Menge von 2-Tupeln der Ein- und Ausgangsknoten der Kanten modelliert, in dem jedes Feld für einen Knoten und jeder Pfeil für eine Kante steht. \\
-Die Spieler starten an den Knoten $v_1$ und $v_2$. Die möglichen Positionen beim ersten Spielschritt $t=0$ sind für Spieler 1 $M_{1,0}=\{v_1\}$ und für Spieler 2 $M_{2,0}=\{v_2\}$. Für jeden weiteren Spielschritt werden von allen Positionen des vorherigen Schrittes alle ausgehenden Kanten zum nächsten Knoten traversiert: 
+Das Spielfeld mit $n$ Feldern wird als gerichteter Graf mit den Knoten
+$V=\{1,2,\ldots,n\}$ und den Kanten $E \subseteq V \times V$ als Menge von
+2-Tupeln der Ein- und Ausgangsknoten der Kanten modelliert, in dem jedes Feld
+für einen Knoten und jeder Pfeil für eine Kante steht. \\ Die Spieler starten
+an den Knoten $v_1$ und $v_2$. Die möglichen Positionen beim ersten
+Spielschritt $t=0$ sind für Spieler 1 $M_{1,0}=\{v_1\}$ und für Spieler 2
+$M_{2,0}=\{v_2\}$. Für jeden weiteren Spielschritt werden von allen Positionen
+des vorherigen Schrittes alle ausgehenden Kanten zum nächsten Knoten
+traversiert:
 \begin{align*}
-M_{s,t+1} = \{w | (v, w) \in E | v \in M_{s, t}\} 
+  M_{s,t+1} = \{w | (v, w) \in E | v \in M_{s, t}\}
 \end{align*}
-Dieser Prozess wird nun wiederholt, bis sich die Knoten, auf denen die Spieler zu einem Zeitpunkt sein können, überlappen; formal bis $M_{1, t} \cap M_{2, t} \neq \emptyset$. Wenn die beiden Spieler sich allerdings nie treffen können, würde man so unendlich lange wiederholen. Um das zu verhindern, wird weiterhin eine Menge $B$ aller besuchten Knotenpaare, zu denen die beiden Spielern schon gleichzeitig sein könnten geführt:
+Dieser Prozess wird nun wiederholt, bis sich die Knoten, auf denen die Spieler zu einem Zeitpunkt sein können, überlappen;
+formal bis $M_{1, t} \cap M_{2, t} \neq \emptyset$. Wenn die beiden Spieler sich allerdings nie treffen können, würde man so
+unendlich lange wiederholen. Um das zu verhindern, wird weiterhin eine Menge $B$ aller besuchten Knotenpaare, zu denen die
+beiden Spielern schon gleichzeitig sein könnten geführt:
 \begin{align*}
-B_0 &= \emptyset \\
-B_{t+1} &= B_{t} \cup (M_{1,t+1} \times M_{2, t+1})
+  B_0     & = \emptyset                                \\
+  B_{t+1} & = B_{t} \cup (M_{1,t+1} \times M_{2, t+1})
 \end{align*}
-Die Wiederholung wird abgebrochen, wenn in einem Schritt keine weiteren Knotenpaare besucht werden: $B_t = B_{t+1}$. Das hat folgenden Grund: Wenn die Spieler sich in einem Schritt $t$ treffen, müssen sie beide von zwei verschiedenen Knoten dort hin gekommen sein; zu diesem Paar müssen die Spieler auch durch ein Paar unterschiedlicher Knoten gekommen sein, und so weiter. Wenn in einem Schritt allerdings keine neuen solchen Knotenpaare betreten werden, heißt das, dass keine neuen Pfade entdeckt werden können, die zu einem Knoten führen könnten, diese wurden alle schon in vorherigen Schritten betreten und davon ausgehende Pfade erkundet. Wenn die ausgehenden Pfade nämlich nicht vollständig erkundet wurden, würden durch diese neue Knotenpaare hinzukommen. So terminiert das Verfahren in höchstens $|V|^2 - |V|$ Schritten, da es höchstens so viele ungleiche Knotenpaare gibt. \\
-Um, wenn das Spiel lösbar ist, den Weg zu rekonstruieren, wird weiterhin eine  Funktion $H_t:V\times V \rightarrow V \times V$ eingeführt, die für erkundete Knotenpaare die jeweiligen Herkunftsknoten speichert (Es kann auch mehrere Herkunftsknotenpaare geben, allerdings wird für jedes Knotenpaar nur ein Herkunftsknotenpaar benötigt). Die Funktion ist nicht definiert für Knotenpaare, die im Schritt $t$ noch nicht besucht wurden.
+Die Wiederholung wird abgebrochen, wenn in einem Schritt keine weiteren Knotenpaare besucht werden: $B_t = B_{t+1}$.
+Das hat folgenden Grund: Wenn die Spieler sich in einem Schritt $t$ treffen, müssen sie beide von zwei verschiedenen
+Knoten dort hin gekommen sein; zu diesem Paar müssen die Spieler auch durch ein Paar unterschiedlicher Knoten gekommen sein,
+und so weiter. Wenn in einem Schritt allerdings keine neuen solchen Knotenpaare betreten werden, heißt das, dass keine neuen
+Pfade entdeckt werden können, die zu einem Knoten führen könnten, diese wurden alle schon in vorherigen Schritten betreten und
+davon ausgehende Pfade erkundet. Wenn die ausgehenden Pfade nämlich nicht vollständig erkundet wurden, würden durch diese neue
+Knotenpaare hinzukommen. So terminiert das Verfahren in höchstens $|V|^2 - |V|$ Schritten, da es höchstens so viele ungleiche Knotenpaare gibt. \\
+Um, wenn das Spiel lösbar ist, den Weg zu rekonstruieren, wird weiterhin eine  Funktion $H_t:B_t \rightarrow B_{t-1}$ eingeführt,
+die für erkundete Knotenpaare die jeweiligen Herkunftsknoten speichert (Es kann auch mehrere Herkunftsknotenpaare geben, allerdings wird für
+jedes Knotenpaar nur ein Herkunftsknotenpaar benötigt). Die Funktion ist nicht definiert für Knotenpaare, die im Schritt $t$ noch nicht besucht wurden.
 \begin{align*}
-H_0(1,2) &= (-1, -1) \\
-H_{t+1}(v_1,v_2) &= \begin{cases}
-H_{t}(v_1, v_2) &wenn (v_1,v_2) \in B_t\\
-(w_1, w_2)|(w_1,v_1), (w_2,v_2) \in E \land w_1 \in M_{1,t} \land w_2 \in M_{2, t}&wenn (v_1,v_2) \in B_{t+1}
-\end{cases}
+  H_0(1,2)         & = (-1, -1)                                                                                                        \\
+  H_{t+1}(v_1,v_2) & = \begin{cases}
+                         H_{t}(v_1, v_2)                                                                    & wenn (v_1,v_2) \in B_t     \\
+                         (w_1, w_2)|(w_1,v_1), (w_2,v_2) \in E \land w_1 \in M_{1,t} \land w_2 \in M_{2, t} & wenn (v_1,v_2) \in B_{t+1}
+                       \end{cases}
 \end{align*}\\\\
-Wenn sich die Spieler im Schritt $t$ auf dem Knoten $v$ treffen, kann man über $H_{t}(v,v)$ die Herkunftsknoten der beiden Spieler bestimmen. Für das Herkunftsknotenpaar kann man genauso die Herkunftsknoten bestimmen und so weiter bis die Herkunftsknoten irgendwann beide $-1$ sind, denn die Herkunftsknoten für das Anfangsknotenpaar $(1,2)$ sind $(-1, -1)$.\\\\
-Aus den Gleichungen lässt sich mithilfe der Abbruchbedingungen ein Algorithmus formulieren, der die Werte von $M$, $B$ und $H$ im jeweils nächsten Schritt, ausgehend von den Startwerten solange berechnet, bis eine der Abbruchbedingungen erfüllt ist:
+Wenn sich die Spieler im Schritt $t$ auf dem Knoten $v$ treffen, kann man über $H_{t}(v,v)$ die Herkunftsknoten der
+beiden Spieler bestimmen. Für das Herkunftsknotenpaar kann man genauso die Herkunftsknoten bestimmen und so weiter
+bis die Herkunftsknoten irgendwann (1,2) sind.\\\\
+Aus den Gleichungen lässt sich mithilfe der Abbruchbedingungen ein Algorithmus formulieren, der die Werte von $M$, $B$
+und $H$ im jeweils nächsten Schritt, ausgehend von den Startwerten solange berechnet, bis eine der Abbruchbedingungen erfüllt ist:
 \begin{algorithmic}
-\State $M_1 \gets \{1\}$
-\State $M_2 \gets \{2\}$
-\State $M_{1l} \gets \emptyset$
-\State $M_{2l} \gets \emptyset$
-\State $B \gets \{(1, 2)\}$
-\State $B_l \gets \emptyset$
-\State $H \gets \{(1, 2) \rightarrow (-1, -1)\}$
-\While {$M_1 \cap M_2 = \emptyset \land B \neq B_l$}
-\State $B_l, M_{1l}, M_{2l} \gets B, M_1, M_2$
-\State $M_1 \gets \{w | (v, w) \in E | v \in M_1\} $
-\State $M_2 \gets \{w | (v, w) \in E | v \in M_2\} $
-\State $B \gets B \cup M_1 \times M_2$
-\State $H \gets \begin{cases}
-H(v_1, v_2) &wenn (v_1,v_2) \in B_l\\
-(w_1, w_2)|(w_1,v_1), (w_2,v_2) \in E \land w_1 \in M_1l \land w_2 \in M_2l&wenn (v_1,v_2) \in B
-\end{cases}$
-\EndWhile
+  \State$M_1 \gets \{1\}$
+  \State$M_2 \gets \{2\}$
+  \State$M_{1l} \gets \emptyset$
+  \State$M_{2l} \gets \emptyset$
+  \State$B \gets \{(1, 2)\}$
+  \State$B_l \gets \emptyset$
+  \State$H \gets (1, 2) \mapsto (-1, -1)$
+  \While{$M_1 \cap M_2 = \emptyset \land B \neq B_l$}
+  \State$B_l, M_{1l}, M_{2l} \gets B, M_1, M_2$
+  \State$M_1 \gets \{w | (v, w) \in E | v \in M_1\} $
+  \State$M_2 \gets \{w | (v, w) \in E | v \in M_2\} $
+  \State$B \gets B \cup M_1 \times M_2$
+  \State$H \gets (v1, v2) \mapsto \begin{cases}
+      H(v_1, v_2)                                                                 & wenn (v_1,v_2) \in B_l \\
+      (w_1, w_2)|(w_1,v_1), (w_2,v_2) \in E \land w_1 \in M_1l \land w_2 \in M_2l & wenn (v_1,v_2) \in B
+    \end{cases}$
+  \EndWhile
+  \If{$M_1 \cap M_2 \neq \emptyset$}
+  \State$P \gets [(x,x) | x \in M_1 \cap M_2]$
+  \While{$P[-1] \neq (1, 2)$}
+  \State$P \gets P +\!\!\!+ [H(P[-1])]$
+  \EndWhile
+  \State \Return $P$
+  \Else
+  \State \Return $[]$
+  \EndIf
 \end{algorithmic}
 \section{Umsetzung}
-Die Lösung der Aufgabe wurde in Python implementiert. Dabei wurde der \lstinline|set|-Datentyp für die endlichen Mengen und der \lstinline|dict|-Datentyp für die Funktion $H$ verwendet. Der Graph $G$ wird als Liste von \lstinline|set|s dargestellt, dabei werden im $k$-ten Element die Knoten gespeichert, zu denen vom Knoten $k$ Kanten zeigen. Es handelt sich um eine Adjazenzliste. Die Knotenpaar-Tupel werden mit dem Datentyp \lstinline|tupel| dargestellt. \\
+Die Lösung der Aufgabe wurde in Python implementiert. Dabei wurde der
+\lstinline|set|-Datentyp für die endlichen Mengen und der
+\lstinline|dict|-Datentyp für die Zuordnung $H$ verwendet. Die Menge der Kanten wird
+als Menge von \lstinline|tupel|s dargestellt. Die Knotenpaar-Tupel werden auch mit dem Datentyp
+\lstinline|tupel| dargestellt. Das Programm ist eine direkte Transkription des Pseudocodes aus der Lösungsidee.\\
 
 \section{Beispiele}
+Die Beispiele stammen von der BwInf-Webseite und sind im Verzeichnis \lstinline|beispiele| zu finden.\\
+\section{Quellcode}
+\lstinputlisting[language=python]{huepfburg doc.py}
 \end{document}

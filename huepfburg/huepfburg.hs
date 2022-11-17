@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-
 import Data.Array ((!))
 import Data.Graph
 import Data.Maybe (fromJust, isJust)
@@ -7,12 +5,14 @@ import Data.Set hiding (map)
 
 type VertexPair = (Vertex, Vertex)
 type OriginFunc = VertexPair -> VertexPair
+-- Ein Iterationsschritt, bestehend aus möglichen Positionen, der Herkunftszuordnung und besuchten Knotenpaaren
 type State = (Set Vertex, Set Vertex, Set VertexPair, OriginFunc)
 
 -- Positionen, an denen ein Spieler im nächsten Schritt sein kann
 nextPos :: Graph -> Set Vertex -> Set Vertex
 nextPos graph = fromList . concatMap (graph !) . elems
 
+-- Nächster Iterationsschritt
 nextState :: Graph -> State -> State
 nextState graph (pos1, pos2, pairs, origin) =
   let pos1n = nextPos graph pos1
@@ -25,19 +25,17 @@ nextState graph (pos1, pos2, pairs, origin) =
              in (pred p1 pos1, pred p2 pos2)
    in (pos1n, pos2n, pairsn, origin_new)
 
--- Findet den Weg zu einem Knotenpaar aus einer Herkunftsfunktion
-startPath :: OriginFunc -> VertexPair -> [VertexPair]
-startPath origin = takeWhile (/=(1, 2)) . iterate origin 
-
+-- Findet Weg, so dass Spieler sich treffen
 solve :: Graph -> State -> Maybe [VertexPair]
 solve graph (pos1, pos2, pairs, origin)
-  | isJust intersect = Just (startPath origin (fromJust intersect, fromJust intersect))
+  | isJust intersect = Just (takeWhile (/=(1, 2)) . iterate origin $ (fromJust intersect, fromJust intersect))
   | pairsn == pairs = Nothing
   | otherwise = solve graph (pos1n, pos2n, pairsn, origin_new)
   where
     (pos1n, pos2n, pairsn, origin_new) = nextState graph (pos1, pos2, pairs, origin)
     intersect = lookupMin (intersection pos1 pos2)
 
+-- Interpretiert String als Tuple
 parseTuple s = let [a, b] = map (read :: String -> Int) $ words s in (a, b)
 
 initState :: State
