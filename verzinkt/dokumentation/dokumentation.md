@@ -24,66 +24,66 @@ Die generierten Muster sind nicht reproduzierbar. Um vergleichbare Muster zu gen
 
 ![beispiel1](bilder/beispiel1.png)
 
-> Anzahl an Keimen: 500
-> Breite des Spawnbereichs: 1000
-> Höhe des Spawnbereichs: 1000
+> **Anzahl an Keimen**: 500
+> **Breite des Spawnbereichs**: 1000
+> **Höhe des Spawnbereichs**: 1000
 >
-> Wachstumwinkel: 1 - 360
-> Wachstumwsgeschwindigkeit: 1 - 5
-> Wachstum in umgekehrte Richtung: 10 - 30
-> Wachstumstartzeit: 1 - 5
+> **Wachstumwinkel**: 1 - 360
+> **Wachstumwsgeschwindigkeit**: 1 - 5
+> **Wachstum in umgekehrte Richtung**: 10 - 30
+> **Wachstumstartzeit**: 1 - 5
 
 #### Beispiel 2
 
 ![beispiel2](bilder/beispiel2.png)
 
-> Anzahl an Keimen: 500
-> Breite des Spawnbereichs: 750
-> Höhe des Spawnbereichs: 750
+> **Anzahl an Keimen**: 500
+> **Breite des Spawnbereichs**: 750
+> **Höhe des Spawnbereichs**: 750
 >
-> Wachstumwinkel: 1 - 360
-> Wachstumwsgeschwindigkeit: 1 - 5
-> Wachstum in umgekehrte Richtung: 10 - 30
-> Wachstumstartzeit: 1 - 5
+> **Wachstumwinkel**: 1 - 360
+> **Wachstumwsgeschwindigkeit**: 1 - 5
+> **Wachstum in umgekehrte Richtung**: 10 - 30
+> **Wachstumstartzeit**: 1 - 5
 
 #### Beispiel 3
 
 ![beispiel3](bilder/beispiel3.png)
 
-> Anzahl an Keimen: 500
-> Breite des Spawnbereichs: 1000
-> Höhe des Spawnbereichs: 1000
+> **Anzahl an Keimen**: 500
+> **Breite des Spawnbereichs**: 1000
+> **Höhe des Spawnbereichs**: 1000
 >
-> Wachstumwinkel: 180 - 360
-> Wachstumwsgeschwindigkeit: 1 - 5
-> Wachstum in umgekehrte Richtung: 10 - 30
-> Wachstumstartzeit: 1 - 5
+> **Wachstumwinkel**: 180 - 360
+> **Wachstumwsgeschwindigkeit**: 1 - 5
+> **Wachstum in umgekehrte Richtung**: 10 - 30
+> **Wachstumstartzeit**: 1 - 5
 
 #### Beispiel 4
 
 ![beispiel4](bilder/beispiel4.png)
 
-> Anzahl an Keimen: 500
-> Breite des Spawnbereichs: 1000
-> Höhe des Spawnbereichs: 1000
+> **Anzahl an Keimen**: 500
+> **Breite des Spawnbereichs**: 1000
+> **Höhe des Spawnbereichs**: 1000
 >
-> Wachstumwinkel: 1 - 360
-> Wachstumwsgeschwindigkeit: 1 - 20
-> Wachstum in umgekehrte Richtung: 10 - 30
-> Wachstumstartzeit: 1 - 10
+> **Wachstumwinkel**: 1 - 360
+> **Wachstumwsgeschwindigkeit**: 1 - 20
+> **Wachstum in umgekehrte Richtung**: 10 - 30
+> **Wachstumstartzeit**: 1 - 10
 
 #### Beispiel 5
 
 ![beispiel5](bilder/beispiel5.png)
 
-> Anzahl an Keimen: 500
-> Breite des Spawnbereichs: 1000
-> Höhe des Spawnbereichs: 1000
+> **Anzahl an Keimen**: 500
+> **Breite des Spawnbereichs**: 1000
+> **Höhe des Spawnbereichs**: 1000
 >
-> Wachstumwinkel: 1 - 360
-> Wachstumwsgeschwindigkeit: 1 - 5
-> Wachstum in umgekehrte Richtung: 10 - 30
-> Wachstumstartzeit: 1 - 60
+> **Wachstumwinkel**: 1 - 360
+> **Wachstumwsgeschwindigkeit**: 1 - 5
+> **Wachstum in umgekehrte Richtung**: 10 - 30
+> **Wachstumstartzeit**: 1 - 60
 
 ## 4. Quellcode
 
