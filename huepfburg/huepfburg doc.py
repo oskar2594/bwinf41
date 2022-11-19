@@ -32,6 +32,7 @@ with open(input("Pfad: ")) as f:
     while line := f.readline():
         edges.add(tuple(map(int, line.split())))
 
+# verbindende Pfade finden
 path = find_paths(edges)
 if path:
     print("Treffen möglich")
