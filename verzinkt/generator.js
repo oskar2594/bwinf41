@@ -2,20 +2,18 @@ class Generator {
     filled = 0;
     constructor(canvas, settings) {
         this.settings = settings;
-        this.canvas = canvas?.getContext("2d"); (canvas.width = settings.width), (canvas.height = settings.height);
-        this.canvas.clearRect(0, 0, this.settings.width, this.settings.height); 
-        this.crystals = new Array(settings.height).fill(0).map((x) => new Array(settings.width).fill(null)); // Kristall-Array erstellen
+        this.canvas = canvas?.getContext("2d"), canvas.width = settings.width, canvas.height = settings.height;
+        this.canvas.clearRect(0, 0, this.settings.width, this.settings.height);
+        this.crystals = new Array(settings.height).fill(0).map(() => new Array(settings.width).fill(null)); // Kristall-Array erstellen
     }
     // Setzt einen Kristall an die angegebene Position, wenn möglich. Gibt true zurück, wenn erfolgreich. 
     async setCrystal(crystalData, position) {
-        if (!(position.y > this.crystals.length - 1 || position.x > this.crystals[0].length - 1 || position.x < 0 || position.y < 0) && (this.crystals[position.y][position.x] == null || this.crystals[position.y][position.x].time > 1)) {
-            this.crystals[position.y][position.x] = crystalData; this.filled++;
-            // Kristall zeichnen
-            this.canvas.fillStyle = crystalData.color;
-            this.canvas.fillRect(position.y, position.x, 1, 1);
-            return true;
-        }
-        return false;
+        if (!(!(position.y > this.crystals.length - 1 || position.x > this.crystals[0].length - 1 || position.x < 0 || position.y < 0) && (this.crystals[position.y][position.x] == null || this.crystals[position.y][position.x].time > 1))) return false;
+        this.crystals[position.y][position.x] = crystalData; this.filled++;
+        // Kristall zeichnen
+        this.canvas.fillStyle = crystalData.color;
+        this.canvas.fillRect(position.y, position.x, 1, 1);
+        return true;
     }
     // Muster generieren
     async generate() {
@@ -32,7 +30,7 @@ class Generator {
                 y: Generator.notZero(Math.sin(growthValues.angle) * growthValues.growthRate) // Wachstum in y-Richtung
             };
             const pixelGrowth = {
-                up: Math.ceil(Math.abs(dirGrowth.y > 0 ? dirGrowth.y : dirGrowth.y * growthValues.oppositeGrowth)), 
+                up: Math.ceil(Math.abs(dirGrowth.y > 0 ? dirGrowth.y : dirGrowth.y * growthValues.oppositeGrowth)),
                 down: Math.ceil(Math.abs(dirGrowth.y < 0 ? dirGrowth.y : dirGrowth.y * growthValues.oppositeGrowth)),
                 left: Math.ceil(Math.abs(dirGrowth.x < 0 ? dirGrowth.x : dirGrowth.x * growthValues.oppositeGrowth)),
                 right: Math.ceil(Math.abs(dirGrowth.x > 0 ? dirGrowth.x : dirGrowth.x * growthValues.oppositeGrowth)),
