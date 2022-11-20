@@ -1,78 +1,96 @@
 import copy
 
-
 def main():
-    with open("beispiel4.txt", "r") as f:
+    # Einlese der Eingabedatei
+    with open("beispiel0.txt", "r") as f:
         file = f.read()
 
-    # Auftragszeit und Eingangszeit in zwei Listen,
-    # sodass der n-te Auftrag durch die jeweils n-1-ten Elemente dargestellt wird
+    # Auftragszeit und Eingangszeit jeweils in Liste
     start = [int(s) for s in file.split()[::2]]
     work = [int(s) for s in file.split()[1::2]]
 
     # Anzahl der Auftraege, und die Zeit
-    iterations = len(start)
-    time = 0
+    iterationen = len(start)
+    Zeit = start[0]
 
-    # Durchlauf der Verfahren mit haesslicher Ausgabe, 
-    # leicht schoenere in waitresults
-    print(first_come_first_serve(start, work, iterations, time))
-    print(shortest_job_next(start, work, iterations, time))
-    print(highest_response_ratio_next(start, work, iterations, time))
+    # fuer den Fall, dass Auftrag ausserhalb Arbeitszeit gestellt wurde
+    if Zeit%1440 < 540:
+        Zeit += 540 - Zeit%1440
+    elif Zeit%1440 > 1020:
+        Zeit += 1980 - Zeit%1440
+
+    first_come_first_serve(start, work, iterationen, Zeit)
+    shortest_job_next(start, work, iterationen, Zeit)
+    highest_response_ratio_next(start, work, iterationen, Zeit)
 
 
-def simulation(i, time_of_order, order_duration, wait, time):
-    # time = max(time, time_of_order[i])
+def simulation(i, time_of_order, order_duration, wait, time):   
 
-    # Wenn die Bearbeitungsdauer den aktuellen Arbeitstag ueberschreitet, 
-    # wird dieser Arbeitstag beendet
-    restarbeitstag = 1020 - time % 1440
-    if order_duration[i] > restarbeitstag:
-        order_duration[i] -= restarbeitstag
-        time += 960 + restarbeitstag
+    i_duration = order_duration[i]
+    work_day_left = 1020 - time%1440
+    if i_duration > work_day_left:                  
+        time += i_duration + (1 + ((i_duration - work_day_left)//480)) * 960
+    else:
+        time += i_duration
 
-    # Fertigstellungszeit des Auftrages ergibt sich aus der restlichen
-    # Arbeitszeit und der Zeit, die zwischen den Arbeitstagen liegt
-    time += order_duration[i] + (order_duration[i] // 480) * 960
-
-    # Wartezeiten der verschiedenen Auftraege werden hier gespeichert
     wait.append(time - time_of_order[i])
+    time_of_order.pop(i)
+    order_duration.pop(i)
+
+    # Startzeit des naechsten Auftrages
+    if len(order_duration) > 0 :
+        time = max(time, time_of_order[0])
+        if time%1440 < 540:
+            time += 540 - time%1440
+        elif time%1440 > 1020:
+            time += 1980 - time%1440
 
     return time
 
 
-def wait_results(wait):  # nur f�r sch�nere Ausgabe gedactht
+def wait_results(wait, name):
+
     max_wait = max(wait)
-    averagewait = sum(wait) / len(wait)
+    averagewait = sum(wait)/len(wait)
+    # implementierung des medians benoetigt eine sortierte Liste 
+    for i in range(1, len(wait)): 
+        e = wait[i] 
+        j = i - 1 
+        while j >= 0 and e < wait[j]: 
+            wait[j + 1] = wait[j] 
+            j -= 1      
+        wait[j + 1] = e 
+
+    if len(wait)%2 == 0:
+        median_wait = wait[len(wait)//2]
+    else:
+        median_wait = wait[len(wait)//2 + 1]
 
     # with open("wartezeiten.txt", "a") as f:
-    #     f.write(f"{max_wait:6} || {averagewait:6} \n")
-    # print(wait)
-    # print('averagewait = ', averagewait, '\nmaxwait = ', max_wait , '\n----------------------------------')
+    #     f.write(f"{name}\nMedian{median_wait:7}\t\tDurchschnitt{averagewait:20}\tMaximum{max_wait:20}\n\n")
+    print(f"{name}\nMedian{median_wait:7}\t\tDurchschnitt{averagewait:20}\tMaximum{max_wait:7}\n")
+    return median_wait, averagewait, max_wait  
+    
 
-
-def first_come_first_serve(start, work, iterations, time):
+def first_come_first_serve(start, work, iterations, Zeit):
     wait = []
     time_of_order = copy.deepcopy(start)
     order_duration = copy.deepcopy(work)
+
     for n in range(iterations):
-        time = max(time, time_of_order[n])
-        time = simulation(n, time_of_order, order_duration, wait, time)
-    wait_results(wait)
-
-    return max(wait), sum(wait) / len(wait)
+        Zeit = simulation(0, time_of_order, order_duration, wait, Zeit) 
+    
+    return wait_results(wait, first_come_first_serve.__name__)
 
 
-def shortest_job_next(start, work, iterations, time):
+def shortest_job_next(start, work, iterations, Zeit):
     wait = []
     time_of_order = copy.deepcopy(start)
     order_duration = copy.deepcopy(work)
     for j in range(iterations):
-        time = max(time, time_of_order[0])
-
         x = 0
         for i in range(len(time_of_order)):
-            if time_of_order[i] > time:
+            if time_of_order[i] > Zeit:
                 x = i
                 break
         else:
@@ -82,24 +100,18 @@ def shortest_job_next(start, work, iterations, time):
         for i in range(x):
             if order_duration[i] < order_duration[n]:
                 n = i
-        time = simulation(n, time_of_order, order_duration, wait, time)
+        Zeit = simulation(n, time_of_order, order_duration, wait, Zeit)
+    
+    return wait_results(wait, shortest_job_next.__name__)
 
-        time_of_order.pop(n)
-        order_duration.pop(n)
-    wait_results(wait)
-
-    return max(wait), sum(wait) / len(wait)
-
-
-def highest_response_ratio_next(start, work, iterations, time):
+def highest_response_ratio_next(start, work, iterations, Zeit):
     wait = []
     time_of_order = copy.deepcopy(start)
     order_duration = copy.deepcopy(work)
     for j in range(iterations):
-        time = max(time, time_of_order[0])
         x = 0
         for i in range(len(time_of_order)):
-            if time_of_order[i] > time:
+            if time_of_order[i] > Zeit:
                 x = i
                 break
         else:
@@ -107,19 +119,11 @@ def highest_response_ratio_next(start, work, iterations, time):
 
         n = 0
         for i in range(x):
-            if (
-                1 + (time - time_of_order[i]) / order_duration[i]
-                > 1 + (time - time_of_order[n]) / order_duration[n]
-            ):
-                n = i
-        time = simulation(n, time_of_order, order_duration, wait, time)
-
-        time_of_order.pop(n)
-        order_duration.pop(n)
-    wait_results(wait)
-
-    return max(wait), sum(wait) / len(wait)
-
+            if 1 + (Zeit - time_of_order[i]) / order_duration[i] > 1 + (Zeit - time_of_order[n]) / order_duration[n]:
+                n = i 
+        Zeit = simulation(n, time_of_order, order_duration, wait, Zeit)
+    
+    return wait_results(wait, highest_response_ratio_next.__name__)
 
 if __name__ == "__main__":
     main()

@@ -15,20 +15,20 @@ while line_number < len(buch):
     while len(arr) > len(stoerung):
         for i, word in enumerate(stoerung):
             if not (word in arr[i] or word.capitalize() in arr[i] or word == "_"):
+                # Wenn die Lösung nicht gefunden wird (was die meiste Zeit passiert) wird das erste Wort gelöscht
                 arr.pop(0)
                 break
             if i == len(stoerung) - 1:
                 # hier ist die lösung gefunden worden
-                # man müsste die lösung noch ein bisschen putzen 
-                # und von allen sonderzeichen befreien, sonst top
                 list_of_results.append((" ".join(arr[: len(stoerung)]), line_number))
 
-                # auch mit: arr = arr[len(stoerung):]
+                # Die gefundene Lösung wird aus arr entfernt
                 for g in range(len(stoerung)):
                     arr.pop(0)
                 break
     line_number += 1
 
+#Lösungsausgabe
 for line, line_number in list_of_results:
     print("line: " + str(line_number))
     print(line)
