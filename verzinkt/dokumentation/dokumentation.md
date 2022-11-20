@@ -10,18 +10,31 @@
 
 ## 1. Lösungsidee
 
-Zur Generierung des Kristallmusters werden zuerst eine beliebige Zahl x an Keimen generiert. Diese werden in einem zweidimensionalen Array abgespeichert. Die Keime werden zufällig in einem definierten Bereich und in einer definierten Anzahl generiert. Daraufhin wird solange iteriert, bis das gesamte Feld voll mit Kristallen ist. Bei jeder Iteration wird durch alle Pixel iteriert und geprüft, ob der Pixel, welcher einen Kristall repräsentiert, bereits gewachsen ist. Ist der Kristall noch nicht gewachsen, wird ein Wachstum ausgelöst. Bei der Generierung der Keime wird jedem Kristall ein Wachstum nach *oben*, *unten*, *rechts* und *links* zugeteilt. Außerdem wird eine Zeit in Iterationen hinterlegt, nachdem der Keim anfängt zu wachsen, und eine Farbe, welche abhängig von einem generierten Winkel ist.
+Zur Generierung des Kristallmusters werden zuerst eine beliebige Zahl x an Keimen generiert. Diese werden in einem zweidimensionalen Array abgespeichert. Die Keime werden zufällig in einem definierten Bereich und in einer definierten Anzahl generiert. Daraufhin wird solange iteriert, bis das gesamte Feld voll mit Kristallen ist. Bei jeder Iteration wird durch alle Pixel iteriert und geprüft, ob der Pixel, welcher einen Kristall repräsentiert, bereits gewachsen ist. Ist der Kristall noch nicht gewachsen, wird ein Wachstum für den Kristall ausgelöst. Bei der Generierung der Keime wird jedem Kristall ein Wachstum nach *oben*, *unten*, *rechts* und *links* zugeteilt. Außerdem wird eine Zeit in Iterationen hinterlegt, nachdem der Keim anfängt zu wachsen, und eine Farbe, welche abhängig von einem generierten Winkel ist.
 
-Die Generierung der Wachstumsrichtungen werden durch ursprünglich drei zufällig generierte Werte bestimmt. Diese Werte sind der Wachstumswinkel **α**, eine Wachstumsrate **w** und eine Wachstumsrate in die entgegengesetzte Richtung **o**. Mit Hilfe des Wachstumswinkel werden dann die Wachstumsrichtungen bestimmt. Die Wachstumsrate gibt an, wie schnell der Kristall wächst. Die Wachstumsrate in die entgegengesetzte Richtung gibt an, wie schnell der Kristall in die entgegengesetzte Richtung zum Winkel **α** wächst. Mithilfe dieser Parameter werden dann ein Wachstum auf der x-Achse und ein Wachstum auf der y-Achse berechnet. Dieses ist in dem Beispielbild zu sehen. Hierbei ist **a** das Wachstum auf der y-Achse und **b** das Wachstum auf der x-Achse. Diese Werte werden durch den Wachstumswinkel **α** bestimmt.
+Die Generierung der Wachstumsgeschwindigkeiten werden durch ursprünglich drei zufällig generierte Werte bestimmt. Diese Werte sind der Wachstumswinkel **α**, eine Wachstumsrate **w** und eine Wachstumsrate in die entgegengesetzte Richtung **o**. Mit Hilfe des Wachstumswinkel werden dann die Wachstumsrichtungen bestimmt. Die Wachstumsrate gibt an, wie schnell der Kristall wächst. Die Wachstumsrate in die entgegengesetzte Richtung gibt an, wie schnell der Kristall in die entgegengesetzte Richtung zum Winkel **α** wächst. Mithilfe dieser Parameter werden dann ein Wachstum auf der x-Achse und ein Wachstum auf der y-Achse berechnet. Dieses ist in dem Beispielbild zu sehen. Hierbei ist **a** das Wachstum auf der y-Achse und **b** das Wachstum auf der x-Achse. Diese Werte werden durch den Wachstumswinkel **α** bestimmt.
 Das Wachstum auf der x-Achse wird über die Formel `cos(α) * w` berechnet. Das Wachstum auf der y-Achse wird über die Formel `sin(α) * w` berechnet.
 
 Es gibt also nun ein Wachstum auf der x- sowie y-Achse. Diese werden dann zu einem Wachstum nach *oben*, *unten*, *rechts* und *links* übersetzt. In diesem aufgeführtem Beispiel ist **a** das Wachstum nach *oben*, **b** das Wachstum nach *rechts*, **c** das Wachstum nach *unten* und **d** das Wachstum nach *links*. Die Strecke a, also das Wachstum auf der y-Achse ist im Falle des Beispieles positiv. Das bedeutet, dass das Wachstum nach oben, also **a**, den Wert *Wachstum auf der Y-Achse* annimmt. Das Wachstum auf der x-Achse ist ebenfalls positiv, sodass das Wachstum nach rechts, also **b** , den Wert *Wachstum auf der x-Achse* annimmt. Nun bleibt noch das Wachstum nach unten und nach links zu bestimmen. Die Strecke **c** ist die entgegengesetzte Seite zum Wachstumswinkel, sodass hier das Wachstum auf der *y-Achse* mit dem Faktor von **o** (Wachstumsrate in die entgegengesetzte Richtung) reduziert wird, also mit der Formel `a * o`. Das Wachstum nach links ist ebenfalls die entgegengesetzte Seite zum Wachstumswinkel, sodass auch hier das Wachstum auf der *x-Achse* mit dem Faktor von **o** reduziert wird.
 
-![schema](bilder/schema.png)
+<img src="bilder/schema.png" alt="schema" style="zoom:25%;" />
 
-Nun gibt es ein Wachstum für jede Richtung. Um den Keim dann Wachsen zu lassen, werden in Richtung nach oben, unten, rechts und links jeweils die Wachstumsstrecken **a**, **b**, **c** und **d** generiert. Dies wird mit einer einfachen Schleife durchgeführt, welche solange Pixel in die jeweilige Richtung generiert, bis ein Rand erreicht wird, ein Pixel mit einem anderen Kristall kollidiert oder genügend Wachstum für die jeweilige Richtung generiert wurde, also den Wert beispielsweise **a** erreicht hat.
+Nun gibt es eine Wachstumsgeschwindigkeit für jede Richtung. Um den Keim dann Wachsen zu lassen, werden in Richtung nach oben, unten, rechts und links jeweils die Wachstumsstrecken **a**, **b**, **c** und **d** generiert. Dies wird mit einer einfachen Schleife durchgeführt, welche solange Pixel in die jeweilige Richtung generiert, bis ein Rand erreicht wird, ein Pixel mit einem anderen Kristall kollidiert oder genügend Wachstum für die jeweilige Richtung generiert wurde, also den Wert beispielsweise **a** erreicht hat.
 
 Diese Prozedur wird so oft ausgeführt, bis das gesamte Feld mit Kristallen gefüllt ist.
+
+Hier ist ein Beispiel für den Beginn einer Generation in einem 20px x 20px großen Feld mit einem Kristall.
+
+| <img src="C:\Users\spamm\OneDrive\Projekte\BwInf\bwinf41\verzinkt\dokumentation\bilder\Beispiel Generierung\index.png" alt="index" style="zoom:400%; image-rendering: pixelated;" /> | <img src="C:\Users\spamm\OneDrive\Projekte\BwInf\bwinf41\verzinkt\dokumentation\bilder\Beispiel Generierung\index2.png" alt="index2" style="zoom:400%; image-rendering: pixelated;" /> |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| <img src="C:\Users\spamm\OneDrive\Projekte\BwInf\bwinf41\verzinkt\dokumentation\bilder\Beispiel Generierung\index3.png" alt="index3" style="zoom:400%; image-rendering: pixelated;" /> | <img src="C:\Users\spamm\OneDrive\Projekte\BwInf\bwinf41\verzinkt\dokumentation\bilder\Beispiel Generierung\index4.png" alt="index4" style="zoom:400%; image-rendering: pixelated;" /> |
+| <img src="C:\Users\spamm\OneDrive\Projekte\BwInf\bwinf41\verzinkt\dokumentation\bilder\Beispiel Generierung\index5.png" alt="index5" style="zoom:400%; image-rendering: pixelated;" /> | <img src="C:\Users\spamm\OneDrive\Projekte\BwInf\bwinf41\verzinkt\dokumentation\bilder\Beispiel Generierung\index6.png" alt="index6" style="zoom:400%; image-rendering: pixelated;" /> |
+| <img src="C:\Users\spamm\OneDrive\Projekte\BwInf\bwinf41\verzinkt\dokumentation\bilder\Beispiel Generierung\index7.png" alt="index7" style="zoom:400%; image-rendering: pixelated;" /> | <img src="C:\Users\spamm\OneDrive\Projekte\BwInf\bwinf41\verzinkt\dokumentation\bilder\Beispiel Generierung\index8.png" alt="index8" style="zoom:400%; image-rendering: pixelated;" /> |
+| <img src="C:\Users\spamm\OneDrive\Projekte\BwInf\bwinf41\verzinkt\dokumentation\bilder\Beispiel Generierung\index9.png" alt="index9" style="zoom:400%; image-rendering: pixelated;" /> | <img src="C:\Users\spamm\OneDrive\Projekte\BwInf\bwinf41\verzinkt\dokumentation\bilder\Beispiel Generierung\index10.png" alt="index10" style="zoom:400%; image-rendering: pixelated;" /> |
+
+
+
+
 
 ## 2. Umsetzung
 
@@ -33,7 +46,7 @@ Die generierten Muster sind nicht reproduzierbar. Um vergleichbare Muster zu gen
 
 #### Beispiel 1
 
-![beispiel1](bilder/beispiel1.png)
+<img src="bilder/beispiel1.png" alt="beispiel1" style="zoom:50%;" />
 
 > **Anzahl an Keimen**: 500
 > **Breite des Spawnbereichs**: 1000
@@ -46,7 +59,7 @@ Die generierten Muster sind nicht reproduzierbar. Um vergleichbare Muster zu gen
 
 #### Beispiel 2
 
-![beispiel2](bilder/beispiel2.png)
+<img src="bilder/beispiel2.png" alt="beispiel2" style="zoom: 50%;" />
 
 > **Anzahl an Keimen**: 500
 > **Breite des Spawnbereichs**: 750
@@ -59,7 +72,7 @@ Die generierten Muster sind nicht reproduzierbar. Um vergleichbare Muster zu gen
 
 #### Beispiel 3
 
-![beispiel3](bilder/beispiel3.png)
+<img src="bilder/beispiel3.png" alt="beispiel3" style="zoom:50%;" />
 
 > **Anzahl an Keimen**: 500
 > **Breite des Spawnbereichs**: 1000
@@ -72,7 +85,7 @@ Die generierten Muster sind nicht reproduzierbar. Um vergleichbare Muster zu gen
 
 #### Beispiel 4
 
-![beispiel4](bilder/beispiel4.png)
+<img src="bilder/beispiel4.png" alt="beispiel4" style="zoom:50%;" />
 
 > **Anzahl an Keimen**: 500
 > **Breite des Spawnbereichs**: 1000
@@ -85,7 +98,7 @@ Die generierten Muster sind nicht reproduzierbar. Um vergleichbare Muster zu gen
 
 #### Beispiel 5
 
-![beispiel5](bilder/beispiel5.png)
+<img src="bilder/beispiel5.png" alt="beispiel5" style="zoom:50%;" />
 
 > **Anzahl an Keimen**: 500
 > **Breite des Spawnbereichs**: 1000
