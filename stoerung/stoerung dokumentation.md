@@ -1,4 +1,12 @@
-# BWINF: Runde 1
+# Aufgabe 1  - Störung
+
+> **Team-ID** 00339
+>
+> **Team-Name** SilverBean
+>
+> **Bearbeiter der Aufgabe** Anton Batgauer
+>
+> 20\. November 2022
 
 ## Lösungsidee
 

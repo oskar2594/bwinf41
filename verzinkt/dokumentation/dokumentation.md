@@ -1,4 +1,4 @@
-# Aufgabe 3  - Wortsuche
+# Aufgabe 2  - Verzinkt
 
 > **Team-ID** 00339
 >
