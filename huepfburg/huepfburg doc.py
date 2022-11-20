@@ -37,8 +37,8 @@ path = find_paths(edges)
 if path:
     print("Treffen möglich")
     print("Pfad 1:")
-    print(" ".join("{:4}".format(x[0]) for x in path))
+    print("->".join(" {} ".format(x[0]) for x in path))
     print("Pfad 2:")
-    print(" ".join("{:4}".format(x[1]) for x in path))
+    print("->".join(" {} ".format(x[1]) for x in path))
 else:
     print("Treffen nicht möglich")
