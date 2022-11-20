@@ -40,46 +40,50 @@ Die folgenden Beispiele sind die Ausgaben für das gegebene "Alice_im_Wunderland
 
 
 Pfad: stoerung0.txt
-line: 439
+line: 440
 »Das kommt mir gar nicht richtig vor,«
 
 
 
 Pfad: stoerung1.txt
-nichts gefunden
+line: 425
+Ich muß in Clara verwandelt
+
+line: 442
+»Ich muß doch Clara sein,
 
 
 
 Pfad: stoerung2.txt
-line: 213
+line: 214
 »Fressen Katzen
  gern Spatzen?
 
-line: 213
+line: 214
 Fressen Katzen gern Spatzen?
 
-line: 214
+line: 215
 Fressen Spatzen gern Katzen?«
 
 
 
 Pfad: stoerung3.txt
-line: 2319
+line: 2320
 das Spiel fing an.
 
-line: 3301
+line: 3302
 'Das Publikum fing an,
 
 
 
 Pfad: stoerung4.txt
-line: 2292
+line: 2293
 ein sehr schöner Tag!«
 
 
 
 Pfad: stoerung5.txt
-line: 2184
+line: 2185
 »Wollen Sie so gut sein,
 
 
@@ -87,11 +91,12 @@ line: 2184
 ## Quellcode
 
 ```python
+# Buch einlesen
 with open("Alice_im_Wunderland.txt", encoding="utf-8") as file:
     buch = list(filter(None, file.readlines()))
 
 # Gestörte Nachricht einlesen
-with open(input("Pfad: ")) as file:
+with open(input("Pfad: "), encoding="utf-8") as file:
     stoerung = file.readline().split(" ")
 
 line_number = 0
@@ -118,7 +123,7 @@ while line_number < len(buch):
 
 #Lösungsausgabe
 for line, line_number in list_of_results:
-    print("line: " + str(line_number))
+    print("line: " + str(line_number + 1))
     print(line)
     print("")
 if not list_of_results:

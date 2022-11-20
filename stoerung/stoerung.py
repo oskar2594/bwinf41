@@ -3,7 +3,7 @@ with open("Alice_im_Wunderland.txt", encoding="utf-8") as file:
     buch = list(filter(None, file.readlines()))
 
 # Gestörte Nachricht einlesen
-with open(input("Pfad: ")) as file:
+with open(input("Pfad: "), encoding="utf-8") as file:
     stoerung = file.readline().split(" ")
 
 line_number = 0
@@ -30,7 +30,7 @@ while line_number < len(buch):
 
 #Lösungsausgabe
 for line, line_number in list_of_results:
-    print("line: " + str(line_number))
+    print("line: " + str(line_number + 1))
     print(line)
     print("")
 if not list_of_results:
