@@ -22,11 +22,15 @@ Für die Umsetztung wird nun eine Liste "arr" eingeführt, die wie ein temporär
 
 Der Suchalgorythmus läuft wie folgt ab:
 
-1.  Eine Zeile aus dem Buch wird Wort für Wort in die Liste "arr" hinzugefügt
-2.  Solange die Länge der Liste "arr" größer ist als die Länge der Störung, wird die Liste "arr" in einem for-loop mit der Störung abgegelichen
-3.  1 Wird eine Stelle gefunden, so wird diese gespeichert und aus der Liste "arr" entfernt
-3.  2 Wird keine Stelle gefunden, so wird nur das erste Wort entfernt und der Algorythmus ab Punkt 2 wiederholt
-4.  Sollte der unter 2. beschriebene Fall nicht eintreten, wird der Suchalgorythmus von Punkt 1 gestartet, um Lösungen in Zeilenumbrüchen finden zu können
+1. Eine Zeile aus dem Buch wird Wort für Wort in die Liste "arr" hinzugefügt
+
+2. Solange die Länge der Liste "arr" größer ist als die Länge der Störung, wird die Liste "arr" in einem for-loop mit der Störung abgegelichen:
+
+   2. 1 Wird eine Stelle gefunden, so wird diese gespeichert und aus der Liste "arr" entfernt
+
+   2. 2 Wird keine Stelle gefunden, so wird nur das erste Wort entfernt und der Algorythmus ab Punkt 2 wiederholt
+
+3. Sollte der unter 2. beschriebene Fall nicht eintreten, wird der Suchalgorythmus von Punkt 1 gestartet, um Lösungen in Zeilenumbrüchen finden zu können
 
 Dieser Ablauf wird für jede Zeile des Buchs in einer while-Schleife ausgeführt und am Ende die Lösungen ausgegeben. Je nach Menge an gefundenen Buchabschnitten lässt sich beurteilen, ob die Störung auf eine eindutige Stelle verweist, auf mehrer mögliche Stellen oder ob es keine gibt. Um die Suche im Buch zu vereinfachen gibt es auch eine Zeilenangabe. 
 
@@ -97,7 +101,7 @@ line: 2185
 
 ```python
 # Buch einlesen
-with open("Alice_im_Wunderland.txt", encoding="utf-8") as file:
+with open("beispiele/Alice_im_Wunderland.txt", encoding="utf-8") as file:
     buch = list(filter(None, file.readlines()))
 
 # Gestörte Nachricht einlesen
@@ -126,7 +130,7 @@ while line_number < len(buch):
                 break
     line_number += 1
 
-#Lösungsausgabe
+# Lösungsausgabe
 for line, line_number in list_of_results:
     print("line: " + str(line_number + 1))
     print(line)
