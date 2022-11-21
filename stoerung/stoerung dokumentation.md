@@ -8,34 +8,39 @@
 >
 > 20\. November 2022
 
-## Lösungsidee
+## Einleitung
 
 Für die Lösung der Aufgabe "Störung" wird ein Suchalgorythmus verwendet, der jedes Wort des Buchs "Alice im Wunderland" mit den Elementen der Störung abgleicht. Sollte ein Abschnitt im Buch gefunden werden bei dem jedes Wort der eingelesenen Störung übereinstimmt, wird diese Stelle gespeichert und die Suche fortgeführt bis das Ende des Buchs erreicht wurde.
 
 
 
-## Umsetzung
+## Lösungsidee
 
 Zu aller erst wird das Buch in eine Liste umgewandelt, wobei jedes Element der Liste einer Zeile im Buch entspricht. Ähnliches wird mit der Störung gemacht, hier ist aber jedes Element ein Wort. 
 
-Für die Umsetztung wird nun die Liste "arr" eingeführt, die wie ein temporärer Speicher ist und die Zeilen des Buchs behält, um sie mit der Stoerung abzugleichen. Man kann diese Liste sich wie die Augen eines Lesers vorstellen. 
+Für die Umsetztung wird nun eine Liste "arr" eingeführt, die wie ein temporärer Speicher ist und die Zeilen des Buchs behält, um sie mit der Stoerung abzugleichen. Man kann sich diese Liste wie die Augen eines Lesers vorstellen. 
 
 Der Suchalgorythmus läuft wie folgt ab:
 
 1.  Eine Zeile aus dem Buch wird Wort für Wort in die Liste "arr" hinzugefügt
 2.  Solange die Länge der Liste "arr" größer ist als die Länge der Störung, wird die Liste "arr" in einem for-loop mit der Störung abgegelichen
-3. 1 Wird eine Stelle gefunden, so wird diese gespeichert und aus der Liste "arr" entfernt
+3.  1 Wird eine Stelle gefunden, so wird diese gespeichert und aus der Liste "arr" entfernt
+3.  2 Wird keine Stelle gefunden, so wird nur das erste Wort entfernt und der Algorythmus ab Punkt 2 wiederholt
+4.  Sollte der unter 2. beschriebene Fall nicht eintreten, wird der Suchalgorythmus von Punkt 1 gestartet, um Lösungen in Zeilenumbrüchen finden zu können
 
-3. 2 Wird keine Stelle gefunden, so wird nur das erste Wort entfernt und der Algorythmus ab Punkt 2 wiederholt
-4. Sollte der unter 2. beschriebene Fall nicht eintreten, wird der Suchalgorythmus von Punkt 1 gestartet, um Lösungen in Zeilenumbrüchen finden zu können
+Dieser Ablauf wird für jede Zeile des Buchs in einer while-Schleife ausgeführt und am Ende die Lösungen ausgegeben. Je nach Menge an gefundenen Buchabschnitten lässt sich beurteilen, ob die Störung auf eine eindutige Stelle verweist, auf mehrer mögliche Stellen oder ob es keine gibt. Um die Suche im Buch zu vereinfachen gibt es auch eine Zeilenangabe. 
 
-Dieser Ablauf wird für jede Zeile des Buchs in einer while-Schleife ausgeführt und am Ende die Lösungen ausgegeben.
+
+
+## Umsetzung
+
+Die Lösung der Aufgabe wurde in Pyhton 3.10.5 implementiert. Dabei werden das Buch "Alice im Wunderland" als Textdatei und die Störungsbeispiele als Textdatei in den eingebauten Datentyp list umgewandelt. Auch der Zwischenspeicher des eingelesenen Buchabschnitts handelt es sich um den Datentyp list. Die Lösungen werden dabei in einer Liste als tupel gespeichert und am Ende ausgegeben. Beim Start des Programms wird der Benutzer nach dem Pfad für die Störungsdatei gefragt. Nach Durchlauf werden dann entweder die gefundenen Abschnitte mit Zeilenangabe ausgegeben oder eine Meldung, dass nichts gefunden wurde. 
 
 
 
 ## Beispiele	
 
-Die folgenden Beispiele sind die Ausgaben für das gegebene "Alice_im_Wunderland.txt" und die einzelnen Stoerfälle stoerung0.txt bis stoerung5.txt
+Die folgenden Beispiele sind die Ausgaben für das gegebene "Alice_im_Wunderland.txt" und die einzelnen Stoerfälle stoerung0.txt bis stoerung5.txt und lassen sich auf der bwinf-Website finden. 
 
 
 
