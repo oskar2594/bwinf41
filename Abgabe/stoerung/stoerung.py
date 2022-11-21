@@ -1,5 +1,5 @@
 # Buch einlesen
-with open("Alice_im_Wunderland.txt", encoding="utf-8") as file:
+with open("beispiele/Alice_im_Wunderland.txt", encoding="utf-8") as file:
     buch = list(filter(None, file.readlines()))
 
 # Gestörte Nachricht einlesen
